@@ -22,6 +22,9 @@ play_sound = lambda do |sound|
   end
 end
 
-bot.command :omg, &play_sound.call(Dir.glob(File.join(sounds, '*')).sample)
+bot.command :omg do |event|
+  sound = Dir.glob(File.join(sounds, '*')).sample
+  play_sound.call(sound).call(event)
+end
 bot.command :michiru, &play_sound.call(File.join(sounds, 'michiru.mp3'))
 bot.run

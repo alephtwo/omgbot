@@ -15,6 +15,7 @@ play_sound = lambda do |sound|
     # Needs to be synchronized, otherwise we'll try to do too much at once.
     voice_channel_lock.synchronize do
       voice_bot = bot.voice_connect channel
+      voice_bot.volume 0.5 # Let's not deafen everybody... too much.
       voice_bot.play_file sound
       voice_bot.destroy
     end

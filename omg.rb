@@ -23,9 +23,10 @@ play_sound = lambda do |sound|
 end
 
 random_sound_commands = %i(
-  bleh
+  dokkan
   grats
   omg
+  ugaa
 )
 
 random_sound_commands.each do |command|

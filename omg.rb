@@ -23,7 +23,7 @@ play_sound = lambda do |sound|
 end
 
 random_sound_commands = %i(
-  dokkan
+  clarisse
   grats
   omg
   ugaa

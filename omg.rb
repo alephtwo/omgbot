@@ -26,6 +26,7 @@ random_sound_commands = %i(
   clarisse
   grats
   grimnir
+  medusa
   omg
   robot
   ugaa

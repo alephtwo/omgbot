@@ -27,6 +27,7 @@ random_sound_commands = %i(
   grats
   grimnir
   jewels
+  kaine
   medusa
   omg
   robot

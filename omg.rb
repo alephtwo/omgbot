@@ -10,10 +10,12 @@ voice_channel_lock = Mutex.new
 play_sound = lambda do |sound|
   lambda do |event|
     channel = event.user.voice_channel
+    puts "Channel: #{channel}"
     return unless channel
 
     # Needs to be synchronized, otherwise we'll try to do too much at once.
     voice_channel_lock.synchronize do
+      puts "Playing: #{sound}"
       voice_bot = bot.voice_connect channel
       voice_bot.play_file sound
       voice_bot.destroy

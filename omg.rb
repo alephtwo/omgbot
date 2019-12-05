@@ -2,7 +2,7 @@ require 'discordrb'
 
 token = ARGV[0]
 bot = Discordrb::Commands::CommandBot.new token: token, prefix: '!'
-puts "This bot's invite URL is #{bot.invite_url}."
+puts "This bot's invite URL is #{bot.invite_url}&permissions=3146752."
 
 sounds = File.join __dir__, 'sounds'
 voice_channel_lock = Mutex.new

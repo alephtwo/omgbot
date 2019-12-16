@@ -1,13 +1,21 @@
+use serenity::client::bridge::voice::ClientVoiceManager;
 use serenity::model::gateway::Ready;
-use serenity::model::id::ChannelId;
 use serenity::model::prelude::Message;
 use serenity::model::Permissions;
-use serenity::prelude::{Context, EventHandler};
+use serenity::prelude::{Context, EventHandler, Mutex, TypeMapKey};
 use std::collections::HashSet;
+use std::sync::Arc;
+use serenity::voice;
+use serenity::voice::AudioSource;
 
 pub struct Handler;
 
 const PREFIX: &str = "!";
+
+pub struct VoiceManager;
+impl TypeMapKey for VoiceManager {
+    type Value = Arc<Mutex<ClientVoiceManager>>;
+}
 
 impl EventHandler for Handler {
     fn message(&self, ctx: Context, msg: Message) {
@@ -17,8 +25,24 @@ impl EventHandler for Handler {
             None => return,
         };
 
-        // What voice channel is the user that requested this sound in?
-        let channel = match user_voice_channel(&ctx, &msg) {
+        // We will need to know what guild we're in.
+        let guild = match msg.guild(&ctx.cache) {
+            Some(guild) => guild,
+            None => {
+                eprintln!("Groups and DMs are not supported.");
+                return;
+            }
+        };
+
+        let guild_id = guild.read().id;
+
+        // What voice channel is this user in?
+        let channel = match guild
+            .read()
+            .voice_states
+            .get(&msg.author.id)
+            .and_then(|vs| vs.channel_id)
+        {
             Some(c) => c,
             None => {
                 eprintln!(
@@ -29,8 +53,32 @@ impl EventHandler for Handler {
             }
         };
 
-        // We know the user's in a channel. Let's join it and play a sound.
-        play_sound(channel, command);
+        // Let's pick a file to play.
+        let source = match pick_file(command) {
+            Some(s) => s,
+            None => return
+        };
+
+        // We know the user's in a voice channel. Let's join it and play the sound...
+        let manager_lock = ctx
+            .data
+            .read()
+            .get::<VoiceManager>()
+            .cloned()
+            .expect("Expected VoiceManager in ShareMap.");
+        let mut manager = manager_lock.lock();
+        match manager.join(guild_id, channel) {
+            Some(handler) => {
+                handler.play(source);
+            },
+            None => eprintln!("Unable to get a handler for the voice channel.")
+        }
+
+        // ... and then leave the voice channel.
+        match manager.remove(guild_id) {
+            Some(_t) => {},
+            None => eprintln!("Error leaving the voice channel.")
+        };
     }
 
     fn ready(&self, ctx: Context, payload: Ready) {
@@ -72,26 +120,15 @@ fn parse_command(msg: &Message) -> Option<String> {
     Some(command.to_string())
 }
 
-fn user_voice_channel(ctx: &Context, msg: &Message) -> Option<ChannelId> {
-    let guild = match msg.guild(&ctx.cache) {
-        Some(guild) => guild,
-        None => {
-            eprintln!("Groups and DMs are not supported.");
+fn pick_file(_category: String) -> Option<Box<dyn AudioSource>> {
+    // TODO: Rickroll, for now.
+    match voice::ytdl("https://www.youtube.com/watch?v=dQw4w9WgXcQ") {
+        Ok(source) => Some(source),
+        Err(why) => {
+            eprintln!("Error picking source: {:?}", why);
             return None;
         }
-    };
-
-    let channel_id = guild
-        .read()
-        .voice_states
-        .get(&msg.author.id)
-        .and_then(|vs| vs.channel_id);
-
-    channel_id
-}
-
-fn play_sound(channel: ChannelId, category: String) {
-    println!("Playing sound (category: {})...", category);
+    }
 }
 
 fn get_command_set() -> HashSet<&'static str> {

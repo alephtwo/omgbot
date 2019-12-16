@@ -1,7 +1,8 @@
-use serenity::model::prelude::Message;
-use serenity::prelude::{Context, EventHandler};
 use serenity::model::gateway::Ready;
+use serenity::model::id::ChannelId;
+use serenity::model::prelude::Message;
 use serenity::model::Permissions;
+use serenity::prelude::{Context, EventHandler};
 use std::collections::HashSet;
 
 pub struct Handler;
@@ -13,12 +14,23 @@ impl EventHandler for Handler {
         // Only allow valid commands to get through.
         let command = match parse_command(&msg) {
             Some(t) => t,
-            None => return
+            None => return,
         };
 
-        // TODO: Make this play the sound.
-        // For now, just report that we parsed a command.
-        msg.channel_id.say(&ctx.http, command).expect("Error");
+        // What voice channel is the user that requested this sound in?
+        let channel = match user_voice_channel(&ctx, &msg) {
+            Some(c) => c,
+            None => {
+                eprintln!(
+                    "User {} issued command {} but is not in a voice channel.",
+                    msg.author.name, command
+                );
+                return;
+            }
+        };
+
+        // We know the user's in a channel. Let's join it and play a sound.
+        play_sound(channel, command);
     }
 
     fn ready(&self, ctx: Context, payload: Ready) {
@@ -58,6 +70,28 @@ fn parse_command(msg: &Message) -> Option<String> {
 
     // It's a valid command!
     Some(command.to_string())
+}
+
+fn user_voice_channel(ctx: &Context, msg: &Message) -> Option<ChannelId> {
+    let guild = match msg.guild(&ctx.cache) {
+        Some(guild) => guild,
+        None => {
+            eprintln!("Groups and DMs are not supported.");
+            return None;
+        }
+    };
+
+    let channel_id = guild
+        .read()
+        .voice_states
+        .get(&msg.author.id)
+        .and_then(|vs| vs.channel_id);
+
+    channel_id
+}
+
+fn play_sound(channel: ChannelId, category: String) {
+    println!("Playing sound (category: {})...", category);
 }
 
 fn get_command_set() -> HashSet<&'static str> {

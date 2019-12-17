@@ -1,20 +1,21 @@
-use serenity::client::bridge::voice::ClientVoiceManager;
-use serenity::model::gateway::Ready;
-use serenity::model::prelude::Message;
-use serenity::model::Permissions;
-use serenity::prelude::{Context, EventHandler, Mutex, TypeMapKey};
-use std::collections::HashSet;
-use std::sync::Arc;
-use serenity::voice;
-use serenity::voice::AudioSource;
-use std::time::Duration;
-use std::thread::sleep;
-
-pub struct Handler;
+use serenity::{
+    client::bridge::voice::ClientVoiceManager,
+    model::{
+        gateway::Ready,
+        id::ChannelId,
+        prelude::{Guild, Message},
+        Permissions,
+    },
+    prelude::{Context, EventHandler, Mutex, RwLock, TypeMapKey},
+    voice::{ffmpeg, AudioSource},
+};
+use std::{collections::HashSet, sync::Arc};
 
 const PREFIX: &str = "!";
 
+pub struct Handler;
 pub struct VoiceManager;
+
 impl TypeMapKey for VoiceManager {
     type Value = Arc<Mutex<ClientVoiceManager>>;
 }
@@ -36,15 +37,8 @@ impl EventHandler for Handler {
             }
         };
 
-        let guild_id = guild.read().id;
-
         // What voice channel is this user in?
-        let channel = match guild
-            .read()
-            .voice_states
-            .get(&msg.author.id)
-            .and_then(|vs| vs.channel_id)
-        {
+        let channel = match get_voice_channel_for_user(&guild, &msg) {
             Some(c) => c,
             None => {
                 eprintln!(
@@ -55,29 +49,34 @@ impl EventHandler for Handler {
             }
         };
 
+        // Grab the voice manager from the cache.
+        let voice_manager = match get_voice_manager_from_cache(&ctx) {
+            Some(vm) => vm,
+            None => {
+                eprintln!("No voice manager in cache.");
+                return;
+            }
+        };
+
         // Let's pick a file to play.
         let source = match pick_file(command) {
             Some(s) => s,
-            None => return
+            None => return,
         };
 
         // We know the user's in a voice channel. Let's join it and play the sound...
-        let manager_lock = ctx
-            .data
-            .read()
-            .get::<VoiceManager>()
-            .cloned()
-            .expect("Expected VoiceManager in ShareMap.");
-        let mut manager = manager_lock.lock();
-        match manager.join(guild_id, channel) {
-            Some(handler) => {
-                handler.play(source)
-            },
+        let guild_id = guild.read().id;
+        let mut manager = voice_manager.lock();
+        // Get a handle to the audio.
+        let _audio = match manager.join(guild_id, channel) {
+            Some(handler) => handler.play_only(source),
             None => {
                 eprintln!("Unable to get a handler for the voice channel.");
                 return;
             }
         };
+
+        // TODO: Wait until the file completes playing and then leave the channel.
     }
 
     fn ready(&self, ctx: Context, payload: Ready) {
@@ -119,9 +118,21 @@ fn parse_command(msg: &Message) -> Option<String> {
     Some(command.to_string())
 }
 
+fn get_voice_channel_for_user(guild: &Arc<RwLock<Guild>>, msg: &Message) -> Option<ChannelId> {
+    guild
+        .read()
+        .voice_states
+        .get(&msg.author.id)
+        .and_then(|vs| vs.channel_id)
+}
+
+fn get_voice_manager_from_cache(ctx: &Context) -> Option<Arc<Mutex<ClientVoiceManager>>> {
+    ctx.data.read().get::<VoiceManager>().cloned()
+}
+
 fn pick_file(_category: String) -> Option<Box<dyn AudioSource>> {
-    // TODO: Rickroll, for now.
-    match voice::ffmpeg("./sounds/omg/rlm-01.mp3") {
+    // TODO: Hardcode this for now; ideally we will find a random file in the category.
+    match ffmpeg("./sounds/omg/rlm-01.mp3") {
         Ok(source) => Some(source),
         Err(why) => {
             eprintln!("Error picking source: {:?}", why);

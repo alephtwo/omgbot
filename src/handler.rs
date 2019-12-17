@@ -7,6 +7,8 @@ use std::collections::HashSet;
 use std::sync::Arc;
 use serenity::voice;
 use serenity::voice::AudioSource;
+use std::time::Duration;
+use std::thread::sleep;
 
 pub struct Handler;
 
@@ -69,15 +71,12 @@ impl EventHandler for Handler {
         let mut manager = manager_lock.lock();
         match manager.join(guild_id, channel) {
             Some(handler) => {
-                handler.play(source);
+                handler.play(source)
             },
-            None => eprintln!("Unable to get a handler for the voice channel.")
-        }
-
-        // ... and then leave the voice channel.
-        match manager.remove(guild_id) {
-            Some(_t) => {},
-            None => eprintln!("Error leaving the voice channel.")
+            None => {
+                eprintln!("Unable to get a handler for the voice channel.");
+                return;
+            }
         };
     }
 
@@ -122,7 +121,7 @@ fn parse_command(msg: &Message) -> Option<String> {
 
 fn pick_file(_category: String) -> Option<Box<dyn AudioSource>> {
     // TODO: Rickroll, for now.
-    match voice::ytdl("https://www.youtube.com/watch?v=dQw4w9WgXcQ") {
+    match voice::ffmpeg("./sounds/omg/rlm-01.mp3") {
         Ok(source) => Some(source),
         Err(why) => {
             eprintln!("Error picking source: {:?}", why);

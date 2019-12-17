@@ -9,7 +9,7 @@ use serenity::{
     prelude::{Context, EventHandler, Mutex, RwLock, TypeMapKey},
     voice::{ffmpeg, AudioSource},
 };
-use std::{collections::HashSet, sync::Arc};
+use std::{collections::HashSet, sync::Arc, thread, time::Duration};
 
 const PREFIX: &str = "!";
 
@@ -68,7 +68,7 @@ impl EventHandler for Handler {
         let guild_id = guild.read().id;
         let mut manager = voice_manager.lock();
         // Get a handle to the audio.
-        let _audio = match manager.join(guild_id, channel) {
+        let audio_lock = match manager.join(guild_id, channel) {
             Some(handler) => handler.play_only(source),
             None => {
                 eprintln!("Unable to get a handler for the voice channel.");
@@ -76,7 +76,30 @@ impl EventHandler for Handler {
             }
         };
 
-        // TODO: Wait until the file completes playing and then leave the channel.
+        // Spin off another thread to monitor the track.
+        let watcher = thread::spawn(move || {
+            let audio = audio_lock.lock();
+            while !audio.finished {
+                // Ideally, this would be done with an event handler for the audio finishing.
+                // Poll until the track is done playing and then return.
+                thread::sleep(Duration::from_secs(1));
+            }
+        });
+        match watcher.join() {
+            Ok(_) => {}
+            Err(why) => {
+                eprintln!("Unable to join threads: {:?}", why);
+            }
+        };
+
+        // Make like a tree and get out of here.
+        match manager.leave(guild_id) {
+            Some(_) => return,
+            None => {
+                eprintln!("Unable to leave the voice channel.");
+                return;
+            }
+        }
     }
 
     fn ready(&self, ctx: Context, payload: Ready) {

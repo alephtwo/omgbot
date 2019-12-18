@@ -69,37 +69,12 @@ impl EventHandler for Handler {
         let mut manager = voice_manager.lock();
         // Get a handle to the audio.
         let audio_lock = match manager.join(guild_id, channel) {
-            Some(handler) => handler.play_only(source),
+            Some(handler) => handler.play_returning(source),
             None => {
                 eprintln!("Unable to get a handler for the voice channel.");
                 return;
             }
         };
-
-        // Spin off another thread to monitor the track.
-        let watcher = thread::spawn(move || {
-            let audio = audio_lock.lock();
-            while !audio.finished {
-                // Ideally, this would be done with an event handler for the audio finishing.
-                // Poll until the track is done playing and then return.
-                thread::sleep(Duration::from_secs(1));
-            }
-        });
-        match watcher.join() {
-            Ok(_) => {}
-            Err(why) => {
-                eprintln!("Unable to join threads: {:?}", why);
-            }
-        };
-
-        // Make like a tree and get out of here.
-        match manager.leave(guild_id) {
-            Some(_) => return,
-            None => {
-                eprintln!("Unable to leave the voice channel.");
-                return;
-            }
-        }
     }
 
     fn ready(&self, ctx: Context, payload: Ready) {

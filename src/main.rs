@@ -1,3 +1,5 @@
+extern crate rand;
+
 use crate::handler::VoiceManager;
 use handler::Handler;
 use serenity::Client;

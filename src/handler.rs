@@ -1,3 +1,4 @@
+use rand::{seq::SliceRandom, thread_rng};
 use serenity::{
     client::bridge::voice::ClientVoiceManager,
     model::{
@@ -9,7 +10,8 @@ use serenity::{
     prelude::{Context, EventHandler, Mutex, RwLock, TypeMapKey},
     voice::{ffmpeg, AudioSource},
 };
-use std::{collections::HashSet, sync::Arc, thread, time::Duration};
+use std::path::PathBuf;
+use std::{collections::HashSet, fs, sync::Arc};
 
 const PREFIX: &str = "!";
 
@@ -68,7 +70,7 @@ impl EventHandler for Handler {
         let guild_id = guild.read().id;
         let mut manager = voice_manager.lock();
         // Get a handle to the audio.
-        let audio_lock = match manager.join(guild_id, channel) {
+        let _audio_lock = match manager.join(guild_id, channel) {
             Some(handler) => handler.play_returning(source),
             None => {
                 eprintln!("Unable to get a handler for the voice channel.");
@@ -128,9 +130,22 @@ fn get_voice_manager_from_cache(ctx: &Context) -> Option<Arc<Mutex<ClientVoiceMa
     ctx.data.read().get::<VoiceManager>().cloned()
 }
 
-fn pick_file(_category: String) -> Option<Box<dyn AudioSource>> {
-    // TODO: Hardcode this for now; ideally we will find a random file in the category.
-    match ffmpeg("./sounds/omg/rlm-01.mp3") {
+fn pick_file(category: String) -> Option<Box<dyn AudioSource>> {
+    let path = "./sounds/".to_owned() + &category;
+    let paths: Vec<PathBuf> = fs::read_dir(path)
+        .unwrap()
+        .map(|p| p.unwrap().path())
+        .collect();
+
+    let path = match paths.choose(&mut thread_rng()) {
+        Some(p) => p,
+        None => {
+            eprintln!("No paths");
+            return None;
+        }
+    };
+
+    match ffmpeg(path) {
         Ok(source) => Some(source),
         Err(why) => {
             eprintln!("Error picking source: {:?}", why);

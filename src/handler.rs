@@ -11,7 +11,8 @@ use serenity::{
     voice::{ffmpeg, AudioSource},
 };
 use std::path::PathBuf;
-use std::{collections::HashSet, fs, sync::Arc};
+use std::time::Duration;
+use std::{collections::HashSet, fs, sync::Arc, thread};
 
 const PREFIX: &str = "!";
 
@@ -70,13 +71,31 @@ impl EventHandler for Handler {
         let guild_id = guild.read().id;
         let mut manager = voice_manager.lock();
         // Get a handle to the audio.
-        let _audio_lock = match manager.join(guild_id, channel) {
-            Some(handler) => handler.play_returning(source),
+        let audio_lock = match manager.join(guild_id, channel) {
+            Some(handler) => handler.play_only(source),
             None => {
                 eprintln!("Unable to get a handler for the voice channel.");
                 return;
             }
         };
+
+        // Poll until we're done.
+        thread::spawn(move || {
+            loop {
+                if audio_lock.lock().finished {
+                    break;
+                }
+                thread::sleep(Duration::from_millis(500));
+            }
+            let vm = match get_voice_manager_from_cache(&ctx) {
+                Some(vm) => vm,
+                None => {
+                    eprintln!("No voice manager in cache.");
+                    return;
+                }
+            };
+            vm.lock().leave(guild_id);
+        });
     }
 
     fn ready(&self, ctx: Context, payload: Ready) {

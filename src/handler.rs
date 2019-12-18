@@ -10,7 +10,7 @@ use serenity::{
     prelude::{Context, EventHandler, Mutex, RwLock, TypeMapKey},
     voice::{ffmpeg, AudioSource},
 };
-use std::{collections::HashSet, fs, path::PathBuf, sync::Arc, thread, time::Duration};
+use std::{collections::HashSet, env, fs, path::PathBuf, sync::Arc, thread, time::Duration};
 
 const PREFIX: &str = "!";
 
@@ -76,7 +76,7 @@ impl EventHandler for Handler {
                 // Sleep for just a little bit before playing.
                 thread::sleep(Duration::from_secs(1));
                 handler.play_only(source)
-            },
+            }
             None => {
                 eprintln!("Unable to get a handler for the voice channel.");
                 return;
@@ -154,7 +154,12 @@ fn get_voice_manager_from_cache(ctx: &Context) -> Option<Arc<Mutex<ClientVoiceMa
 }
 
 fn pick_file(category: String) -> Option<Box<dyn AudioSource>> {
-    let path = "./sounds/".to_owned() + &category;
+    let path = env::current_exe()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .join("sounds")
+        .join(&category);
 
     let paths: Vec<PathBuf> = fs::read_dir(path)
         .unwrap()

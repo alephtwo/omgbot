@@ -1,4 +1,4 @@
-use rand::{seq::SliceRandom, thread_rng};
+use crate::{commands, sound_picker};
 use serenity::{
     client::bridge::voice::ClientVoiceManager,
     model::{
@@ -8,11 +8,8 @@ use serenity::{
         Permissions,
     },
     prelude::{Context, EventHandler, Mutex, RwLock, TypeMapKey},
-    voice::{ffmpeg, AudioSource},
 };
-use std::{collections::HashSet, env, fs, path::PathBuf, sync::Arc, thread, time::Duration};
-
-const PREFIX: &str = "!";
+use std::{sync::Arc, thread, time::Duration};
 
 pub struct Handler;
 pub struct VoiceManager;
@@ -24,7 +21,7 @@ impl TypeMapKey for VoiceManager {
 impl EventHandler for Handler {
     fn message(&self, ctx: Context, msg: Message) {
         // Only allow valid commands to get through.
-        let command = match parse_command(&msg) {
+        let command = match commands::parse_command(&msg) {
             Some(t) => t,
             None => return,
         };
@@ -60,7 +57,7 @@ impl EventHandler for Handler {
         };
 
         // Let's pick a file to play.
-        let source = match pick_file(command) {
+        let source = match sound_picker::pick(command) {
             Some(s) => s,
             None => return,
         };
@@ -116,31 +113,6 @@ impl EventHandler for Handler {
     }
 }
 
-fn parse_command(msg: &Message) -> Option<String> {
-    let content = &msg.content;
-
-    // If the message doesn't start with the prefix it's not a command. Stop.
-    if !content.starts_with(PREFIX) {
-        return None;
-    }
-
-    // If the message contains more than one token, it's not a command. Stop.
-    if content.split_whitespace().count() > 1 {
-        return None;
-    }
-
-    // Now we know it's a command, or at least an attempt at one. Let's grab it.
-    let command: &str = &content.replace(PREFIX, "");
-
-    // If it's not a valid command, we should stop.
-    if !get_command_set().contains(&command) {
-        return None;
-    }
-
-    // It's a valid command!
-    Some(command.to_string())
-}
-
 fn get_voice_channel_for_user(guild: &Arc<RwLock<Guild>>, msg: &Message) -> Option<ChannelId> {
     guild
         .read()
@@ -151,49 +123,4 @@ fn get_voice_channel_for_user(guild: &Arc<RwLock<Guild>>, msg: &Message) -> Opti
 
 fn get_voice_manager_from_cache(ctx: &Context) -> Option<Arc<Mutex<ClientVoiceManager>>> {
     ctx.data.read().get::<VoiceManager>().cloned()
-}
-
-fn pick_file(category: String) -> Option<Box<dyn AudioSource>> {
-    let path = env::current_exe()
-        .unwrap()
-        .parent()
-        .unwrap()
-        .join("sounds")
-        .join(&category);
-
-    let paths: Vec<PathBuf> = fs::read_dir(path)
-        .unwrap()
-        .map(|p| p.unwrap().path())
-        .collect();
-
-    let path = match paths.choose(&mut thread_rng()) {
-        Some(p) => p,
-        None => {
-            eprintln!("No paths");
-            return None;
-        }
-    };
-
-    match ffmpeg(path) {
-        Ok(source) => Some(source),
-        Err(why) => {
-            eprintln!("Error picking source: {:?}", why);
-            return None;
-        }
-    }
-}
-
-fn get_command_set() -> HashSet<&'static str> {
-    let mut set = HashSet::new();
-    set.insert("clarisse");
-    set.insert("grats");
-    set.insert("grimnir");
-    set.insert("jewels");
-    set.insert("kaine");
-    set.insert("medusa");
-    set.insert("omg");
-    set.insert("robot");
-    set.insert("thunder");
-    set.insert("ugaa");
-    set
 }

@@ -36,8 +36,10 @@ fn commands() -> HashSet<&'static str> {
     set.insert("jewels");
     set.insert("kaine");
     set.insert("medusa");
+    set.insert("michiru");
     set.insert("omg");
     set.insert("robot");
+    set.insert("ruria");
     set.insert("thunder");
     set.insert("ugaa");
     set

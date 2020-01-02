@@ -10,8 +10,7 @@ use serenity::{
     prelude::{Context, EventHandler, Mutex, RwLock, TypeMapKey},
     voice,
 };
-use std::fs::File;
-use std::{path::PathBuf, sync::Arc, thread, time::Duration};
+use std::{fs::File, path::PathBuf, sync::Arc, thread, time::Duration};
 
 pub struct Handler;
 pub struct VoiceManager;

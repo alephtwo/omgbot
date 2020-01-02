@@ -31,6 +31,7 @@ pub fn parse_command(msg: &Message) -> Option<String> {
 fn commands() -> HashSet<&'static str> {
     let mut set = HashSet::new();
     set.insert("bruh");
+    set.insert("cena");
     set.insert("clarisse");
     set.insert("grats");
     set.insert("grimnir");

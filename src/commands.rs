@@ -42,6 +42,7 @@ fn commands() -> HashSet<&'static str> {
     set.insert("omb");
     set.insert("omg");
     set.insert("rat");
+    set.insert("rats");
     set.insert("robot");
     set.insert("ruria");
     set.insert("shababababababa");

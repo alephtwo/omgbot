@@ -106,6 +106,7 @@ impl EventHandler for Handler {
                 }
             };
             vm.lock().leave(guild_id);
+            // This currently leaves a zombie, which is something we should address...
         });
     }
 

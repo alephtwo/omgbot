@@ -1,10 +1,16 @@
 use crate::files;
 use serenity::model::prelude::Message;
 use std::{collections::HashSet, fs, iter::FromIterator};
+use crate::commands::Command::{Help, PlaySound};
 
 const PREFIX: &str = "!";
 
-pub fn parse_command(msg: &Message) -> Option<String> {
+pub enum Command {
+    Help,
+    PlaySound(String)
+}
+
+pub fn parse_command(msg: &Message) -> Option<Command> {
     let content = &msg.content;
 
     // If the message doesn't start with the prefix it's not a command. Stop.
@@ -20,13 +26,17 @@ pub fn parse_command(msg: &Message) -> Option<String> {
     // Now we know it's a command, or at least an attempt at one. Let's grab it.
     let command: &str = &content.replace(PREFIX, "");
 
+    if command == "help" {
+        return Some(Help);
+    }
+
     // If it's not a valid command, we should stop.
-    if !commands().contains(command) {
-        return None;
+    if commands().contains(command) {
+        return Some(PlaySound(command.to_string()));
     }
 
     // It's a valid command!
-    Some(command.to_string())
+    return None;
 }
 
 pub fn commands() -> HashSet<String> {

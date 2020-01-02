@@ -32,12 +32,9 @@ fn commands() -> HashSet<&'static str> {
     let mut set = HashSet::new();
     set.insert("bruh");
     set.insert("clarisse");
-    set.insert("funf");
     set.insert("grats");
     set.insert("grimnir");
-    set.insert("jewels");
     set.insert("kaine");
-    set.insert("medusa");
     set.insert("michiru");
     set.insert("omb");
     set.insert("omg");
@@ -46,8 +43,6 @@ fn commands() -> HashSet<&'static str> {
     set.insert("robot");
     set.insert("ruria");
     set.insert("shababababababa");
-    set.insert("targetacquired");
-    set.insert("thunder");
     set.insert("ugaa");
     set
 }

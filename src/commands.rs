@@ -35,8 +35,7 @@ pub fn parse_command(msg: &Message) -> Option<Command> {
         return Some(PlaySound(command.to_string()));
     }
 
-    // It's a valid command!
-    return None;
+    None
 }
 
 pub fn commands() -> HashSet<String> {

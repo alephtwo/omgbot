@@ -18,6 +18,6 @@ pub fn pick_file(category: String) -> Option<PathBuf> {
 
     match result {
         Some(t) => Some(t.to_path_buf()),
-        None => None
+        None => None,
     }
 }

@@ -10,8 +10,8 @@ use serenity::{
     prelude::{Context, EventHandler, Mutex, RwLock, TypeMapKey},
     voice,
 };
-use std::{sync::Arc, thread, time::Duration, path::PathBuf};
 use std::fs::File;
+use std::{path::PathBuf, sync::Arc, thread, time::Duration};
 
 pub struct Handler;
 pub struct VoiceManager;
@@ -148,12 +148,14 @@ fn upload_sound(ctx: &Context, msg: &Message, source: &PathBuf) {
 
     let name = source.file_name().unwrap().to_str().unwrap();
 
-    let result = msg.channel_id.send_files(&ctx.http, vec![(&file, name)], |m| {
-        m.content("You aren't in a channel, but here's the sound...");
-        m
-    });
+    let result = msg
+        .channel_id
+        .send_files(&ctx.http, vec![(&file, name)], |m| {
+            m.content("You aren't in a channel, but here's the sound...");
+            m
+        });
     match result {
-        Ok(_a) => {},
+        Ok(_a) => {}
         Err(why) => {
             eprintln!("Unable to upload sound: {:?}", why);
         }

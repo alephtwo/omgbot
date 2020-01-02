@@ -1,3 +1,4 @@
+use crate::commands::Command::{Help, PlaySound};
 use crate::{commands, files};
 use serenity::{
     client::bridge::voice::ClientVoiceManager,
@@ -10,8 +11,14 @@ use serenity::{
     prelude::{Context, EventHandler, Mutex, RwLock, TypeMapKey},
     voice,
 };
-use std::{fs::File, iter::FromIterator, path::PathBuf, sync::Arc, thread, time::Duration};
-use crate::commands::Command::{Help, PlaySound};
+use std::{
+    fs::File,
+    iter::FromIterator,
+    path::PathBuf,
+    sync::{mpsc, Arc},
+    thread,
+    time::Duration,
+};
 
 pub struct Handler;
 pub struct VoiceManager;
@@ -24,7 +31,7 @@ impl EventHandler for Handler {
     fn message(&self, ctx: Context, msg: Message) {
         match commands::parse_command(&msg).unwrap() {
             Help => post_help(ctx, msg),
-            PlaySound(category) => play_sound(ctx, msg, category)
+            PlaySound(category) => play_sound(ctx, msg, category),
         };
     }
 
@@ -49,7 +56,10 @@ fn post_help(ctx: Context, msg: Message) {
         .collect::<Vec<String>>()
         .join("\n");
 
-    if let Err(why) = msg.channel_id.say(&ctx.http, format!("Commands:\n{}", lines)) {
+    if let Err(why) = msg
+        .channel_id
+        .say(&ctx.http, format!("Commands:\n{}", lines))
+    {
         eprintln!("Error sending message: {:?}", why);
     }
 }
@@ -79,31 +89,43 @@ fn play_sound(ctx: Context, msg: Message, category: String) {
 
     // We know the user's in a voice channel. Let's join it and play the sound...
     let guild_id = guild.read().id;
-    let mut manager = voice_manager.lock();
-    // Get a handle to the audio.
-    let audio_lock = manager
-        .join(guild_id, channel)
-        .map(|handler| {
-            // Sometimes, things can move a little quickly.
-            // The sound might play while the connected "ping" is still playing.
-            // Sleep for just a little bit before playing.
-            thread::sleep(Duration::from_secs(1));
-            handler.play_only(audio_source)
-        })
-        .unwrap();
 
-    // Poll until we're done.
-    thread::spawn(move || {
-        loop {
-            if audio_lock.lock().finished {
-                break;
-            }
-            thread::sleep(Duration::from_millis(500));
-        }
-        let vm = get_voice_manager_from_cache(&ctx).unwrap();
-        vm.lock().leave(guild_id);
-        // This currently leaves a zombie, which is something we should address...
+    // Spawn a thread to play the audio.
+    let (tx, rx) = mpsc::channel();
+
+    let child_thread = thread::spawn(move || {
+        // The child needs its own handle to the voice manager.
+        let voice_manager = get_voice_manager_from_cache(&ctx).unwrap();
+        // Get a handle to the audio.
+        let audio_lock = voice_manager
+            .lock()
+            .join(guild_id, channel)
+            .map(|handler| {
+                // Sometimes, things can move a little quickly.
+                // The sound might play while the connected "ping" is still playing.
+                // Sleep for just a little bit before playing.
+                thread::sleep(Duration::from_secs(1));
+                handler.play_only(audio_source)
+            })
+            .unwrap();
+        // Send a handle back to the main thread.
+        tx.send(audio_lock).ok();
     });
+
+    // Receive the audio lock and poll until it's done.
+    let audio_lock = rx.recv().unwrap();
+    loop {
+        if audio_lock.lock().finished {
+            break;
+        }
+        thread::sleep(Duration::from_millis(500));
+    }
+
+    // Leave the channel.
+    voice_manager.lock().leave(guild_id);
+
+    // Recover the thread we spawned.
+    child_thread.join().ok();
 }
 
 fn upload_sound(ctx: &Context, msg: &Message, source: &PathBuf) {

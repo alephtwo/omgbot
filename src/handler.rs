@@ -8,6 +8,7 @@ use serenity::{
         Permissions,
     },
     prelude::{Context, EventHandler, Mutex, RwLock, TypeMapKey},
+    voice,
 };
 use std::{sync::Arc, thread, time::Duration, path::PathBuf};
 use std::fs::File;
@@ -64,7 +65,7 @@ impl EventHandler for Handler {
         };
 
         // Convert the source to an AudioSource so it can be played.
-        let audio_source = match sound_picker::to_audio_source(&source) {
+        let audio_source = match voice::ffmpeg(&source).ok() {
             Some(s) => s,
             None => {
                 eprintln!("Audio could not be converted to an AudioSource.");

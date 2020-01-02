@@ -85,6 +85,7 @@ fn play_sound(ctx: Context, msg: Message, category: String) {
     let voice_manager = get_voice_manager_from_cache(&ctx).unwrap();
 
     // Convert the source to an AudioSource so it can be played.
+    // TODO: Note that ffmpeg currently spawns a zombie thread which can't be reaped by this process
     let audio_source = voice::ffmpeg(&source).unwrap();
 
     // We know the user's in a voice channel. Let's join it and play the sound...
@@ -92,7 +93,6 @@ fn play_sound(ctx: Context, msg: Message, category: String) {
 
     // Spawn a thread to play the audio.
     let (tx, rx) = mpsc::channel();
-
     let child_thread = thread::spawn(move || {
         // The child needs its own handle to the voice manager.
         let voice_manager = get_voice_manager_from_cache(&ctx).unwrap();

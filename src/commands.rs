@@ -1,13 +1,13 @@
+use crate::commands::Command::{Help, PlaySound};
 use crate::files;
 use serenity::model::prelude::Message;
 use std::{collections::HashSet, fs, iter::FromIterator};
-use crate::commands::Command::{Help, PlaySound};
 
 const PREFIX: &str = "!";
 
 pub enum Command {
     Help,
-    PlaySound(String)
+    PlaySound(String),
 }
 
 pub fn parse_command(msg: &Message) -> Option<Command> {

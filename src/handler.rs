@@ -1,4 +1,4 @@
-use crate::{commands, sound_picker};
+use crate::{commands, files};
 use serenity::{
     client::bridge::voice::ClientVoiceManager,
     model::{
@@ -27,7 +27,7 @@ impl EventHandler for Handler {
         let guild = msg.guild(&ctx.cache).unwrap();
 
         // Let's pick a file to play.
-        let source = sound_picker::pick_file(command).unwrap();
+        let source = files::pick_file(command).unwrap();
 
         // What voice channel is this user in?
         let channel = match get_voice_channel_for_user(&guild, &msg) {
@@ -80,6 +80,10 @@ impl EventHandler for Handler {
             .user
             .invite_url(&ctx.http, Permissions::empty())
             .unwrap();
+
+        for command in commands::commands() {
+            println!("{}", command);
+        }
 
         println!("Invite URL: {}", url);
     }

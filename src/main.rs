@@ -7,8 +7,8 @@ use std::env;
 use std::sync::Arc;
 
 mod commands;
+mod files;
 mod handler;
-mod sound_picker;
 
 fn main() {
     let token = env::var("DISCORD_TOKEN").expect("DISCORD_TOKEN must be set.");

@@ -1,5 +1,6 @@
+use crate::files;
 use serenity::model::prelude::Message;
-use std::collections::HashSet;
+use std::{collections::HashSet, fs, iter::FromIterator};
 
 const PREFIX: &str = "!";
 
@@ -20,7 +21,7 @@ pub fn parse_command(msg: &Message) -> Option<String> {
     let command: &str = &content.replace(PREFIX, "");
 
     // If it's not a valid command, we should stop.
-    if !commands().contains(&command) {
+    if !commands().contains(command) {
         return None;
     }
 
@@ -28,22 +29,19 @@ pub fn parse_command(msg: &Message) -> Option<String> {
     Some(command.to_string())
 }
 
-fn commands() -> HashSet<&'static str> {
-    let mut set = HashSet::new();
-    set.insert("bruh");
-    set.insert("cena");
-    set.insert("clarisse");
-    set.insert("grats");
-    set.insert("grimnir");
-    set.insert("kaine");
-    set.insert("michiru");
-    set.insert("omb");
-    set.insert("omg");
-    set.insert("rat");
-    set.insert("rats");
-    set.insert("robot");
-    set.insert("ruria");
-    set.insert("shababababababa");
-    set.insert("ugaa");
-    set
+pub fn commands() -> HashSet<String> {
+    let paths: Vec<String> = fs::read_dir(files::sound_dir())
+        .unwrap()
+        .map(|p| {
+            p.unwrap()
+                .path()
+                .file_name()
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .to_owned()
+        })
+        .collect();
+
+    HashSet::from_iter(paths.iter().cloned())
 }

@@ -29,9 +29,10 @@ impl TypeMapKey for VoiceManager {
 
 impl EventHandler for Handler {
     fn message(&self, ctx: Context, msg: Message) {
-        match commands::parse_command(&msg).unwrap() {
-            Help => post_help(ctx, msg),
-            PlaySound(category) => play_sound(ctx, msg, category),
+        match commands::parse_command(&msg) {
+            Some(Help) => post_help(ctx, msg),
+            Some(PlaySound(category)) => play_sound(ctx, msg, category),
+            None => return
         };
     }
 

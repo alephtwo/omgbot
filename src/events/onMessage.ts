@@ -10,7 +10,6 @@ export default async (msg: Message) => {
     }
 
     // If this isn't a command, we can stop.
-    const categories = getAllCategories();
     if (!msg.content.startsWith('!')) {
         return;
     }

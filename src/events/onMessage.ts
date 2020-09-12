@@ -1,6 +1,8 @@
 import { Message } from "discord.js";
 import { pickSound, getAllCategories } from '../sounds';
 
+const categories = getAllCategories();
+
 export default async (msg: Message) => {
     // If it's not from a guild, don't bother doing anything.
     if (!msg.guild) {
@@ -15,7 +17,16 @@ export default async (msg: Message) => {
 
     // Make sure it's a real category
     const category = msg.content.replace(/^!/, '');
-    if (!getAllCategories().has(category)) {
+    if (category === 'help') {
+        const help = Array.from(categories)
+            .sort((a: string, b: string) => a.localeCompare(b))
+            .map(c => `* !${c}`)
+
+        msg.channel.send(help);
+        return;
+    }
+    
+    if (!categories.has(category)) {
         return;
     }
 

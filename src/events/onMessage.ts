@@ -20,7 +20,7 @@ export default async (msg: Message) => {
     if (category === 'help') {
         const help = Array.from(categories)
             .sort((a: string, b: string) => a.localeCompare(b))
-            .map(c => `* !${c}`)
+            .map(c => `* \`!${c}\``)
 
         msg.channel.send(help);
         return;

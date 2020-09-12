@@ -3,13 +3,13 @@ import * as path from 'path';
 
 const root = path.join(__dirname, '..', 'sounds');
 
-export function pickSound (category: string) {
+export function pickSound (category: string): string {
     const sounds = getSounds(category);
     const index = Math.floor(Math.random() * sounds.length);
     return sounds[index];
 }
 
-export function getAllCategories (): Set<String> {
+export function getAllCategories (): Set<string> {
     const dirs = glob.sync(path.join(root, '*'))
         .map(f => path.basename(f));
     return new Set(dirs);

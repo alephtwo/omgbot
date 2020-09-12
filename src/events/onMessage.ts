@@ -1,9 +1,9 @@
-import { Message, MessageAttachment } from "discord.js";
+import { Message, MessageAttachment, VoiceChannel } from "discord.js";
 import { pickSound, getAllCategories } from '../sounds';
 
 const categories = getAllCategories();
 
-export default async (msg: Message) => {
+export default (msg: Message): void => {
     // If it's not from a guild, don't bother doing anything.
     if (!msg.guild) {
         return;
@@ -21,7 +21,7 @@ export default async (msg: Message) => {
             .sort((a: string, b: string) => a.localeCompare(b))
             .map(c => `* \`!${c}\``)
 
-        msg.channel.send(help);
+        void msg.channel.send(help);
         return;
     }
     
@@ -33,13 +33,18 @@ export default async (msg: Message) => {
     const sound = pickSound(category);
 
     // If the user isn't in a voice channel let's send them the file.
-    if (!msg.member?.voice.channel) {
+    const channel = msg.member?.voice.channel;
+    if (!channel) {
         const attachment = new MessageAttachment(sound);
-        msg.channel.send(attachment);
+        void msg.channel.send(attachment);
         return;
     }
 
-    const conn = await msg.member.voice.channel.join();
+    void playSound(channel, sound);
+}
+
+async function playSound (channel: VoiceChannel, sound: string) {
+    const conn = await channel.join();
 
     try {
         const dispatcher = conn.play(sound);

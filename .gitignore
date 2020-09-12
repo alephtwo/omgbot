@@ -1,7 +1,2 @@
+/node_modules
 /target
-**/*.rs.bk
-
-/.idea
-*.iml
-
-/omgbot

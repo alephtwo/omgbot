@@ -9,6 +9,12 @@ export function pickSound (category: string) {
     return sounds[index];
 }
 
+export function getAllCategories (): Set<String> {
+    const dirs = glob.sync(path.join(root, '*'))
+        .map(f => path.basename(f));
+    return new Set(dirs);
+}
+
 function getSounds (category: string) {
     return glob.sync(path.join(root, category, '**', '*'));
 }

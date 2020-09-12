@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { pickSound } from '../sounds';
+import { pickSound, getAllCategories } from '../sounds';
 
 export default async (msg: Message) => {
     // If it's not from a guild, don't bother doing anything.
@@ -8,7 +8,14 @@ export default async (msg: Message) => {
     }
 
     // If this isn't a command, we can stop.
+    const categories = getAllCategories();
     if (!msg.content.startsWith('!')) {
+        return;
+    }
+
+    // Make sure it's a real category
+    const category = msg.content.replace(/^!/, '');
+    if (!getAllCategories().has(category)) {
         return;
     }
 
@@ -18,7 +25,7 @@ export default async (msg: Message) => {
     }
 
     const conn = await msg.member.voice.channel.join();
-    const sound = pickSound(msg.content.replace(/!/, ''));
+    const sound = pickSound(category);
 
     try {
         const dispatcher = conn.play(sound);

@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, MessageAttachment } from "discord.js";
 import { pickSound, getAllCategories } from '../sounds';
 
 const categories = getAllCategories();
@@ -30,13 +30,17 @@ export default async (msg: Message) => {
         return;
     }
 
-    // If the user isn't in a voice channel let's stop.
+    // Pick a sound...
+    const sound = pickSound(category);
+
+    // If the user isn't in a voice channel let's send them the file.
     if (!msg.member?.voice.channel) {
+        const attachment = new MessageAttachment(sound);
+        msg.channel.send(attachment);
         return;
     }
 
     const conn = await msg.member.voice.channel.join();
-    const sound = pickSound(category);
 
     try {
         const dispatcher = conn.play(sound);

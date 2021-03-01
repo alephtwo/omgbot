@@ -46,13 +46,19 @@ export default (msg: Message): void => {
 async function playSound(channel: VoiceChannel, sound: string) {
   const conn = await channel.join();
 
-  try {
-    const dispatcher = conn.play(sound);
-    dispatcher.on('finish', () => {
-      dispatcher.destroy();
-      conn.disconnect();
-    });
-  } catch (err) {
+  // Need to add quotes around the sound so that it doesn't break when
+  // the path contains spaces... big sigh.
+  const dispatcher = conn.play(`"${sound}"`);
+
+  console.log(sound);
+
+  dispatcher.on('finish', () => {
+    dispatcher.destroy();
     conn.disconnect();
-  }
+  });
+
+  dispatcher.on('error', error => {
+    console.error(error);
+    conn.disconnect();
+  });
 }

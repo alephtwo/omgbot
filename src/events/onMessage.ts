@@ -17,11 +17,7 @@ export default (msg: Message): void => {
   // Make sure it's a real category
   const category = msg.content.replace(/^!/, '');
   if (category === 'help') {
-    const help = Array.from(categories)
-      .sort((a: string, b: string) => a.localeCompare(b))
-      .map((c) => `* \`!${c}\``);
-
-    void msg.channel.send(help);
+    displayHelp(msg);
     return;
   }
 
@@ -57,8 +53,16 @@ async function playSound(channel: VoiceChannel, sound: string) {
     conn.disconnect();
   });
 
-  dispatcher.on('error', error => {
+  dispatcher.on('error', (error) => {
     console.error(error);
     conn.disconnect();
   });
+}
+
+function displayHelp(msg: Message) {
+  const help = Array.from(categories)
+    .sort((a: string, b: string) => a.localeCompare(b))
+    .map((c) => `* \`!${c}\``);
+
+  void msg.author.send(help);
 }

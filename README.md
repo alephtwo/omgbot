@@ -8,9 +8,9 @@ When a command is issued, the following occurs:
 
 1. A sound is chosen for the given command.
 1. If the user issuing the command is in a voice channel, the bot joins that
-    voice channel.
+   voice channel.
 1. The bot plays the sound in the voice channel or uploads it to the text
-    channel the user issued the command in.
+   channel the user issued the command in.
 1. If the bot joined a voice channel to play the sound, it leaves the channel.
 
 ## Usage

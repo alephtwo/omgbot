@@ -3,7 +3,7 @@ import onMessage from './events/onMessage';
 import onReady from './events/onReady';
 
 const client = new Discord.Client({
-  intents: Discord.Intents.NON_PRIVILEGED
+  intents: Discord.Intents.NON_PRIVILEGED,
 });
 
 client.on('ready', onReady(client));

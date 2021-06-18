@@ -1,4 +1,11 @@
-import { AudioPlayerStatus, createAudioPlayer, createAudioResource, joinVoiceChannel, StreamType, VoiceConnectionStatus } from '@discordjs/voice';
+import {
+  AudioPlayerStatus,
+  createAudioPlayer,
+  createAudioResource,
+  joinVoiceChannel,
+  StreamType,
+  VoiceConnectionStatus,
+} from '@discordjs/voice';
 import { Message, MessageAttachment, StageChannel, VoiceChannel } from 'discord.js';
 import { pickSound, getAllCategories } from '../sounds';
 
@@ -48,15 +55,15 @@ async function playSound(channel: VoiceChannel | StageChannel, sound: string) {
   const connection = joinVoiceChannel({
     channelId: channel.id,
     guildId: channel.guild.id,
-    adapterCreator: channel.guild.voiceAdapterCreator
+    adapterCreator: channel.guild.voiceAdapterCreator,
   });
   connection.subscribe(player);
 
   player.play(audio);
-  player.on('error', error => {
+  player.on('error', (error) => {
     console.log(error);
     connection.destroy();
-  })
+  });
 
   player.on('stateChange', (_prev, next) => {
     console.debug(`previous: ${_prev.status}`);
@@ -71,7 +78,7 @@ function displayHelp(msg: Message) {
   const help = Array.from(categories)
     .sort((a: string, b: string) => a.localeCompare(b))
     .map((c) => `* \`!${c}\``)
-    .join("\n");
+    .join('\n');
 
   void msg.author.send(help).catch();
 }

@@ -66,8 +66,6 @@ async function playSound(channel: VoiceChannel | StageChannel, sound: string) {
   });
 
   player.on('stateChange', (_prev, next) => {
-    console.debug(`previous: ${_prev.status}`);
-    console.debug(`next: ${next.status}`);
     if (next.status === AudioPlayerStatus.Idle && connection.state.status !== VoiceConnectionStatus.Destroyed) {
       connection.destroy();
     }

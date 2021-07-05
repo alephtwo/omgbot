@@ -7,6 +7,6 @@ const client = new Discord.Client({
 });
 
 client.on('ready', onReady(client));
-client.on('message', onMessage);
+client.on('messageCreate', onMessage);
 
 void client.login(process.env.DISCORD_TOKEN);

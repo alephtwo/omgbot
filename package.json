@@ -22,9 +22,9 @@
   "homepage": "https://github.com/alephtwo/omgbot#readme",
   "dependencies": {
     "@discordjs/opus": "0.5.3",
-    "@discordjs/voice": "0.5.2",
+    "@discordjs/voice": "0.5.3",
     "bufferutil": "4.0.3",
-    "discord.js": "github:discordjs/discord.js#a7c6678c7246025c4b358a5396dbacf4a73148ee",
+    "discord.js": "github:discordjs/discord.js#fe5d56c9b11b3e5f05933c6d746237b9f353b392",
     "erlpack": "github:discord/erlpack",
     "glob": "7.1.7",
     "sodium": "3.0.2",

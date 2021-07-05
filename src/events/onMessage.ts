@@ -2,6 +2,7 @@ import {
   AudioPlayerStatus,
   createAudioPlayer,
   createAudioResource,
+  DiscordGatewayAdapterCreator,
   joinVoiceChannel,
   StreamType,
   VoiceConnectionStatus,
@@ -55,7 +56,8 @@ async function playSound(channel: VoiceChannel | StageChannel, sound: string) {
   const connection = joinVoiceChannel({
     channelId: channel.id,
     guildId: channel.guild.id,
-    adapterCreator: channel.guild.voiceAdapterCreator,
+    // TODO: Remove this cast, it probably doesn't even work
+    adapterCreator: channel.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
   });
   connection.subscribe(player);
 

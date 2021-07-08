@@ -24,7 +24,7 @@
     "@discordjs/opus": "0.5.3",
     "@discordjs/voice": "0.5.3",
     "bufferutil": "4.0.3",
-    "discord.js": "github:discordjs/discord.js#755c180659c125532fe6f8e33e6c3b56e275311b",
+    "discord.js": "github:discordjs/discord.js#67e9ce46933c6471fad60d38255f19ce4318c7d2",
     "erlpack": "github:discord/erlpack",
     "glob": "7.1.7",
     "sodium": "3.0.2",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@types/glob": "7.1.4",
-    "@types/node": "16.0.0",
+    "@types/node": "16.0.1",
     "@types/ws": "7.4.6",
     "@typescript-eslint/eslint-plugin": "4.28.2",
     "@typescript-eslint/parser": "4.28.2",

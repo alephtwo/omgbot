@@ -22,9 +22,9 @@
   "homepage": "https://github.com/alephtwo/omgbot#readme",
   "dependencies": {
     "@discordjs/opus": "0.5.3",
-    "@discordjs/voice": "0.5.3",
+    "@discordjs/voice": "0.5.4",
     "bufferutil": "4.0.3",
-    "discord.js": "github:discordjs/discord.js#a8984bc68c8ac6be615b8fd50eac667879720ab5",
+    "discord.js": "github:discordjs/discord.js#4d53d0fd115e3a31e7a431c5dece8fc251c2115d",
     "erlpack": "github:discord/erlpack",
     "glob": "7.1.7",
     "sodium": "3.0.2",
@@ -33,11 +33,11 @@
   },
   "devDependencies": {
     "@types/glob": "7.1.4",
-    "@types/node": "16.3.1",
+    "@types/node": "16.3.3",
     "@types/ws": "7.4.6",
-    "@typescript-eslint/eslint-plugin": "4.28.2",
-    "@typescript-eslint/parser": "4.28.2",
-    "eslint": "7.30.0",
+    "@typescript-eslint/eslint-plugin": "4.28.3",
+    "@typescript-eslint/parser": "4.28.3",
+    "eslint": "7.31.0",
     "prettier": "2.3.2",
     "typescript": "4.3.5"
   }

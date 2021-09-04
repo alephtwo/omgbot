@@ -12,5 +12,9 @@ describe('parseBangCommand', () => {
 
   it('lots of typing gives first command', () => {
     assert.equal(parseBangCommand('!omg !a !b !c'), 'omg');
-  })
+  });
+
+  it('command can be present within string', () => {
+    assert.equal(parseBangCommand('you should add !omg'), 'omg');
+  });
 });

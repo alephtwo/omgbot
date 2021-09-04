@@ -6,6 +6,8 @@ export function parseBangCommand(msg: string): string | null {
     return null;
   }
 
+  const command = msg.split(' ')[0];
+
   // Make sure it's a real category
-  return msg.replace(/^!/, '');
+  return command.replace(/^!/, '');
 }

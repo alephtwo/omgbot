@@ -9,4 +9,8 @@ describe('parseBangCommand', () => {
   it('! prefix gives command', () => {
     assert.equal(parseBangCommand('!omg'), 'omg');
   });
+
+  it('lots of typing gives first command', () => {
+    assert.equal(parseBangCommand('!omg !a !b !c'), 'omg');
+  })
 });

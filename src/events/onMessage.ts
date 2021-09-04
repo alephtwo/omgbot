@@ -8,6 +8,7 @@ import {
   VoiceConnectionStatus,
 } from '@discordjs/voice';
 import { Message, MessageAttachment, StageChannel, VoiceChannel } from 'discord.js';
+import { parseBangCommand } from '../command/parseBangCommand';
 import { pickSound, getAllCategories } from '../sounds';
 
 const categories = getAllCategories();
@@ -19,24 +20,20 @@ export default (msg: Message): void => {
     return;
   }
 
-  // If this isn't a command, we can stop.
-  if (!msg.content.startsWith('!')) {
+  const command = parseBangCommand(msg.content);
+  if (command === null) {
     return;
   }
-
-  // Make sure it's a real category
-  const category = msg.content.replace(/^!/, '');
-  if (category === 'help') {
+  // TODO: Improve this... see parseBangCommand.ts
+  if (command === 'help') {
     displayHelp(msg);
-    return;
   }
-
-  if (!categories.has(category)) {
+  if (!categories.has(command)) {
     return;
   }
 
   // Pick a sound...
-  const sound = pickSound(category);
+  const sound = pickSound(command);
 
   // If the user isn't in a voice channel let's send them the file.
   const channel = msg.member?.voice.channel;

@@ -40,14 +40,14 @@ export default (msg: Message): void => {
 
   if (!channel) {
     const attachment = new MessageAttachment(sound);
-    msg.channel.send({ files: [attachment] }).catch();
+    void msg.channel.send({ files: [attachment] }).catch();
     return;
   }
 
   void playSound(channel, sound);
 };
 
-async function playSound(channel: VoiceChannel | StageChannel, sound: string) {
+function playSound(channel: VoiceChannel | StageChannel, sound: string) {
   const audio = createAudioResource(sound, { inputType: StreamType.Arbitrary });
 
   const connection = joinVoiceChannel({

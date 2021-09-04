@@ -7,6 +7,9 @@
     "target": "ES6",
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+  },
+  "include": [
+    "src"
+  ]
 }

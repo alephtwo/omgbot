@@ -15,9 +15,21 @@ const client = new Discord.Client({
 client.on('ready', onReady(client));
 client.on('messageCreate', onMessage);
 
-client.on('voiceStateUpdate', (_prev, next) => {
-  if (next.channel) {
-    void playSound(next.channel, pickSound('hirys'));
+// This code is extremely cursed.
+// It is cursed code.
+// Remove it or keep it at your own peril.
+client.on('voiceStateUpdate', (prev, next) => {
+  // Ignore when the bot itself joins the channel to prevent duplicates.
+  if (next.member?.id === client.user?.id) {
+    return;
+  }
+
+  if (!prev.channel && next.channel) {
+    const channel = next.channel;
+    // Set a timeout on this so it doesn't play THE INSTANT the user joins
+    setTimeout(() => {
+      void playSound(channel, pickSound('hirys'));
+    }, 750);
   }
 });
 

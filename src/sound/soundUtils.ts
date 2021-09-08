@@ -1,7 +1,7 @@
 import * as glob from 'glob';
 import * as path from 'path';
 
-const root = path.join(__dirname, '..', 'sounds');
+const root = path.join(__dirname, '..', '..', 'sounds');
 
 export function pickSound(category: string): string {
   const sounds = getSounds(category);

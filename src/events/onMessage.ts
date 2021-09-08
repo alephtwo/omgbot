@@ -1,18 +1,9 @@
-import {
-  AudioPlayerStatus,
-  createAudioPlayer,
-  createAudioResource,
-  DiscordGatewayAdapterCreator,
-  joinVoiceChannel,
-  StreamType,
-  VoiceConnectionStatus,
-} from '@discordjs/voice';
-import { Message, MessageAttachment, StageChannel, VoiceChannel } from 'discord.js';
+import { Message, MessageAttachment } from 'discord.js';
 import { parseBangCommand } from '../command/parseBangCommand';
-import { pickSound, getAllCategories } from '../sounds';
+import { pickSound, getAllCategories } from '../sound/soundUtils';
+import { playSound } from '../sound/playSound';
 
 const categories = getAllCategories();
-const player = createAudioPlayer();
 
 export default (msg: Message): void => {
   // If it's not from a guild, don't bother doing anything.
@@ -46,30 +37,6 @@ export default (msg: Message): void => {
 
   void playSound(channel, sound);
 };
-
-function playSound(channel: VoiceChannel | StageChannel, sound: string) {
-  const audio = createAudioResource(sound, { inputType: StreamType.Arbitrary });
-
-  const connection = joinVoiceChannel({
-    channelId: channel.id,
-    guildId: channel.guild.id,
-    // TODO: Remove this cast, it probably doesn't even work
-    adapterCreator: channel.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
-  });
-  connection.subscribe(player);
-
-  player.play(audio);
-  player.on('error', (error) => {
-    console.log(error);
-    connection.destroy();
-  });
-
-  player.on('stateChange', (_prev, next) => {
-    if (next.status === AudioPlayerStatus.Idle && connection.state.status !== VoiceConnectionStatus.Destroyed) {
-      connection.destroy();
-    }
-  });
-}
 
 function displayHelp(msg: Message) {
   const help = Array.from(categories)

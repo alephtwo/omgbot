@@ -4,7 +4,7 @@ import * as path from 'path';
 import { getAllCategories } from '../../src/sound/soundUtils';
 
 describe('Sound Utils', () => {
-  it('Get all sounds returns every folder', () => {
+  it('Get all categories returns everything', () => {
     const dir = path.join(__dirname, '..', '..', 'sounds', '*');
     const expected = new Set(glob.sync(dir).map((e) => path.basename(e)));
 

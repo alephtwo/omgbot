@@ -2,6 +2,7 @@ import {
   AudioPlayerStatus,
   createAudioPlayer,
   createAudioResource,
+  DiscordGatewayAdapterCreator,
   joinVoiceChannel,
   StreamType,
   VoiceConnectionStatus,
@@ -16,7 +17,8 @@ export function playSound(channel: VoiceChannel | StageChannel, sound: string): 
   const connection = joinVoiceChannel({
     channelId: channel.id,
     guildId: channel.guild.id,
-    adapterCreator: channel.guild.voiceAdapterCreator,
+    // This cast will probably not always 100% match, but it should never _fail_
+    adapterCreator: channel.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
   });
   connection.subscribe(player);
 

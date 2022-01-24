@@ -10,5 +10,5 @@ export function parseBangCommand(msg: string): string | null {
   }
 
   // Grab the first command, strip the bang
-  return commands[0].replace(/^!/, '');
+  return commands[0].replace(/^!/, '').trim();
 }

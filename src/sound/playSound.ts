@@ -8,6 +8,7 @@ import {
   VoiceConnectionStatus,
 } from '@discordjs/voice';
 import { StageChannel, VoiceChannel } from 'discord.js';
+import { pickRandomSound } from './soundUtils';
 
 const player = createAudioPlayer();
 
@@ -33,4 +34,9 @@ export function playSound(channel: VoiceChannel | StageChannel, sound: string): 
       connection.destroy();
     }
   });
+}
+
+export function playRandomSound(channel: VoiceChannel | StageChannel): void {
+  const sound = pickRandomSound();
+  playSound(channel, sound);
 }

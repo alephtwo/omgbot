@@ -17,4 +17,8 @@ describe('parseBangCommand', () => {
   it('command can be present within string', () => {
     assert.equal(parseBangCommand('you should add !omg'), 'omg');
   });
+
+  it('! by itself parses', () => {
+    assert.equal(parseBangCommand('!'), '');
+  });
 });

@@ -1,9 +1,5 @@
-import { Message, MessageAttachment } from 'discord.js';
+import { Message } from 'discord.js';
 import { parseBangCommand } from '../command/parseBangCommand';
-import { pickSound, getAllCategories, pickRandomSound } from '../sound/soundUtils';
-import { playSound } from '../sound/playSound';
-
-const categories = getAllCategories();
 
 export default (msg: Message): void => {
   // If it's not from a guild, don't bother doing anything.
@@ -11,39 +7,9 @@ export default (msg: Message): void => {
     return;
   }
 
-  const command = parseBangCommand(msg.content);
-  if (command === null) {
+  const { command } = parseBangCommand(msg);
+  if (!command) {
     return;
   }
-  // TODO: Improve this... see parseBangCommand.ts
-  if (command === 'help') {
-    displayHelp(msg);
-  }
-  if (!(command === '' || categories.has(command))) {
-    return;
-  }
-
-  // Pick a sound...
-  // If the command is empty, pick one at complete random
-  const sound = command === '' ? pickRandomSound() : pickSound(command);
-
-  // If the user isn't in a voice channel let's send them the file.
-  const channel = msg.member?.voice.channel;
-
-  if (!channel) {
-    const attachment = new MessageAttachment(sound);
-    void msg.channel.send({ files: [attachment] }).catch();
-    return;
-  }
-
-  void playSound(channel, sound);
+  command.run();
 };
-
-function displayHelp(msg: Message) {
-  const help = Array.from(categories)
-    .sort((a: string, b: string) => a.localeCompare(b))
-    .map((c) => `* \`!${c}\``)
-    .join('\n');
-
-  void msg.author.send(help).catch();
-}

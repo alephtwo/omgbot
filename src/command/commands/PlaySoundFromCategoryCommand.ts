@@ -10,7 +10,7 @@ export default class PlaySoundFromCategoryCommand extends PlaySoundCommand {
     this.#category = category;
   }
 
-  pickSound() {
-    return pickSound(this.#category);
+  async pickSound() {
+    return await pickSound(this.#category);
   }
 }

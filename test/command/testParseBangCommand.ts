@@ -1,24 +1,44 @@
-import { assert } from 'chai';
+import { Message } from 'discord.js';
 import { parseBangCommand } from '../../src/command/parseBangCommand';
+import { mock, when, instance } from 'strong-mock';
+import PlayRandomSoundCommand from '../../src/command/commands/PlayRandomSoundCommand';
+import { assert } from 'chai';
+import PlaySoundFromCategoryCommand from '../../src/command/commands/PlaySoundFromCategoryCommand';
 
 describe('parseBangCommand', () => {
   it('No prefix gives null', () => {
-    assert.isNull(parseBangCommand('hello world!'));
+    const { parsed, command } = parseBangCommand(mockMessage('hello world!'));
+    assert.isUndefined(parsed);
+    assert.isUndefined(command);
   });
 
   it('! prefix gives command', () => {
-    assert.equal(parseBangCommand('!omg'), 'omg');
+    const { parsed, command } = parseBangCommand(mockMessage('!omg'));
+    assert.equal(parsed, 'omg');
+    assert.instanceOf(command, PlaySoundFromCategoryCommand);
   });
 
   it('lots of typing gives first command', () => {
-    assert.equal(parseBangCommand('!omg !a !b !c'), 'omg');
+    const { parsed, command } = parseBangCommand(mockMessage('!omg !a !b !c'));
+    assert.equal(parsed, 'omg');
+    assert.instanceOf(command, PlaySoundFromCategoryCommand);
   });
 
   it('command can be present within string', () => {
-    assert.equal(parseBangCommand('you should add !omg'), 'omg');
+    const { parsed, command } = parseBangCommand(mockMessage('you should add !omg'));
+    assert.equal(parsed, 'omg');
+    assert.instanceOf(command, PlaySoundFromCategoryCommand);
   });
 
   it('! by itself parses', () => {
-    assert.equal(parseBangCommand('!'), '');
+    const { parsed, command } = parseBangCommand(mockMessage('!'));
+    assert.equal(parsed, '');
+    assert.instanceOf(command, PlayRandomSoundCommand);
   });
 });
+
+function mockMessage(s: string): Message {
+  const message = mock<Message>();
+  when(message.content).thenReturn(s);
+  return instance(message);
+}

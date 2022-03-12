@@ -28,7 +28,7 @@ client.on('voiceStateUpdate', (prev, next) => {
     const channel = next.channel;
     // Set a timeout on this so it doesn't play THE INSTANT the user joins
     setTimeout(() => {
-      void playSound(channel, pickSound('hirys'));
+      void pickSound('hirys').then((sound) => playSound(channel, sound));
     }, 750);
   }
 });

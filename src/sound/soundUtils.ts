@@ -1,18 +1,17 @@
 import * as glob from 'glob';
 import * as path from 'path';
+import sample from '../random/sample';
 
 const root = path.join(__dirname, '..', '..', 'sounds');
 
-export function pickRandomSound(): string {
+export async function pickRandomSound(): Promise<string> {
   const sounds = globFiles(path.join(root, '**', '*'));
-  const index = Math.floor(Math.random() * sounds.length);
-  return sounds[index];
+  return sample(sounds);
 }
 
-export function pickSound(category: string): string {
+export async function pickSound(category: string): Promise<string> {
   const sounds = globFiles(path.join(root, category, '**', '*'));
-  const index = Math.floor(Math.random() * sounds.length);
-  return sounds[index];
+  return sample(sounds);
 }
 
 export function getAllCategories(): Set<string> {

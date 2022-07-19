@@ -1,4 +1,4 @@
-import { Message, MessageAttachment } from 'discord.js';
+import { Message, AttachmentBuilder } from 'discord.js';
 import { playSound } from '../../sound/playSound';
 import Command from './Command';
 
@@ -18,7 +18,7 @@ export default abstract class PlaySoundCommand implements Command {
     const channel = this.#msg.member?.voice.channel;
 
     if (!channel) {
-      const attachment = new MessageAttachment(sound);
+      const attachment = new AttachmentBuilder(sound);
       void this.#msg.channel.send({ files: [attachment] }).catch();
       return;
     }

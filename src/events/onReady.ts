@@ -1,8 +1,8 @@
-import { Client } from 'discord.js';
+import { Client, OAuth2Scopes } from 'discord.js';
 
 export default (client: Client) => (): void => {
   const url = client.generateInvite({
-    scopes: ['bot'],
+    scopes: [OAuth2Scopes.Bot],
   });
   console.log(`Invite URL: ${url}`);
 

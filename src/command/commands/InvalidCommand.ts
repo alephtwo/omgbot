@@ -9,5 +9,6 @@ export class InvalidCommand implements Command {
 
   run() {
     console.error(`Invalid command: ${this.#command}`);
+    return Promise.resolve();
   }
 }

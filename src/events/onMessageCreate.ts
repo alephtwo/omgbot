@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
 import { parseBangCommand } from '../command/parseBangCommand';
 
-export default (msg: Message): void => {
+export async function onMessageCreate(msg: Message): Promise<void> {
   // If it's not from a guild, don't bother doing anything.
   if (!msg.guild) {
     return;
@@ -11,5 +11,5 @@ export default (msg: Message): void => {
   if (!command) {
     return;
   }
-  command.run();
-};
+  await command.run();
+}

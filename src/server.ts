@@ -1,16 +1,21 @@
 import * as Discord from 'discord.js';
 import { GatewayIntentBits } from 'discord.js';
-import onMessage from './events/onMessage';
-import onReady from './events/onReady';
+import { onMessageCreate } from './events/onMessageCreate';
+import { onReady } from './events/onReady';
 import { playSound } from './sound/playSound';
 import { pickSound } from './sound/soundUtils';
 
 const client = new Discord.Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.MessageContent
+  ],
 });
 
 client.on('ready', onReady(client));
-client.on('messageCreate', onMessage);
+client.on('messageCreate', onMessageCreate);
 
 // This code is extremely cursed.
 // It is cursed code.

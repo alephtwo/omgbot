@@ -1,3 +1,3 @@
 export default interface Command {
-  run: () => void;
+  run: () => Promise<void>;
 }

@@ -18,5 +18,6 @@ export default class HelpCommand implements Command {
       .join('\n');
 
     void this.#msg.author.send(help).catch();
+    return Promise.resolve();
   }
 }

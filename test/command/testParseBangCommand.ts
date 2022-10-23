@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { parseBangCommand } from '../../src/command/parseBangCommand';
-import { mock, when, instance } from 'strong-mock';
+import { mock, when } from 'strong-mock';
 import PlayRandomSoundCommand from '../../src/command/commands/PlayRandomSoundCommand';
 import { assert } from 'chai';
 import PlaySoundFromCategoryCommand from '../../src/command/commands/PlaySoundFromCategoryCommand';
@@ -39,6 +39,6 @@ describe('parseBangCommand', () => {
 
 function mockMessage(s: string): Message {
   const message = mock<Message>();
-  when(message.content).thenReturn(s);
-  return instance(message);
+  when(() => message.content).thenReturn(s);
+  return message;
 }

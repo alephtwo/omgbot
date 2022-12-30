@@ -23,7 +23,7 @@
   "dependencies": {
     "@discordjs/opus": "0.9.0",
     "@discordjs/voice": "0.14.0",
-    "axios": "1.2.1",
+    "axios": "1.2.2",
     "bufferutil": "4.0.7",
     "discord.js": "14.7.1",
     "glob": "8.0.3",
@@ -36,7 +36,7 @@
     "@types/glob": "8.0.0",
     "@types/mocha": "10.0.1",
     "@types/node": "18.11.18",
-    "@types/ws": "8.5.3",
+    "@types/ws": "8.5.4",
     "@typescript-eslint/eslint-plugin": "5.47.1",
     "@typescript-eslint/parser": "5.47.1",
     "chai": "4.3.7",

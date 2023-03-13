@@ -1,4 +1,4 @@
-import * as glob from 'glob';
+import { globSync } from 'glob';
 import * as path from 'path';
 import sample from '../random/sample';
 
@@ -15,10 +15,10 @@ export async function pickSound(category: string): Promise<string> {
 }
 
 export function getAllCategories(): Set<string> {
-  const dirs = glob.sync(path.join(root, '*')).map((f) => path.basename(f));
+  const dirs = globSync(path.join(root, '*')).map((f) => path.basename(f));
   return new Set(dirs);
 }
 
 function globFiles(globstring: string) {
-  return glob.sync(globstring, { nodir: true });
+  return globSync(globstring, { nodir: true });
 }

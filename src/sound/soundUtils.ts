@@ -4,12 +4,12 @@ import sample from '../random/sample';
 
 const root = path.join(__dirname, '..', '..', 'sounds');
 
-export async function pickRandomSound(): Promise<string> {
+export function pickRandomSound(): string {
   const sounds = globFiles(path.join(root, '**', '*'));
   return sample(sounds);
 }
 
-export async function pickSound(category: string): Promise<string> {
+export function pickSound(category: string): string {
   const sounds = globFiles(path.join(root, category, '**', '*'));
   return sample(sounds);
 }

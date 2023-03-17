@@ -9,10 +9,10 @@ export default abstract class PlaySoundCommand implements Command {
     this.#msg = msg;
   }
 
-  abstract pickSound(): Promise<string>;
+  abstract pickSound(): string;
 
-  async run() {
-    const sound = await this.pickSound();
+  run() {
+    const sound = this.pickSound();
 
     // If the user isn't in a voice channel let's send them the file.
     const channel = this.#msg.member?.voice.channel;

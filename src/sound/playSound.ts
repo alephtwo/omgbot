@@ -6,8 +6,8 @@ import {
   joinVoiceChannel,
   StreamType,
   VoiceConnectionStatus,
-} from '@discordjs/voice';
-import { StageChannel, VoiceChannel } from 'discord.js';
+} from "@discordjs/voice";
+import { StageChannel, VoiceChannel } from "discord.js";
 
 const player = createAudioPlayer();
 
@@ -23,12 +23,12 @@ export function playSound(channel: VoiceChannel | StageChannel, sound: string): 
   connection.subscribe(player);
 
   player.play(audio);
-  player.on('error', (error) => {
+  player.on("error", (error) => {
     console.log(error);
     connection.destroy();
   });
 
-  player.on('stateChange', (_prev, next) => {
+  player.on("stateChange", (_prev, next) => {
     if (next.status === AudioPlayerStatus.Idle && connection.state.status !== VoiceConnectionStatus.Destroyed) {
       connection.destroy();
     }

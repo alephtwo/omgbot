@@ -1,4 +1,4 @@
-import { Client, OAuth2Scopes } from 'discord.js';
+import { Client, OAuth2Scopes } from "discord.js";
 
 export function onReady(client: Client) {
   return () => {
@@ -7,6 +7,6 @@ export function onReady(client: Client) {
     });
     console.log(`Invite URL: ${url}`);
 
-    void client.user?.setActivity('!help for commands');
+    void client.user?.setActivity("!help for commands");
   };
 }

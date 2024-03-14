@@ -1,6 +1,6 @@
-import { Message } from 'discord.js';
-import { getAllCategories } from '../../sound/soundUtils';
-import Command from './Command';
+import { Message } from "discord.js";
+import { getAllCategories } from "../../sound/soundUtils";
+import Command from "./Command";
 
 const categories = getAllCategories();
 
@@ -15,7 +15,7 @@ export default class HelpCommand implements Command {
     const help = Array.from(categories)
       .sort((a: string, b: string) => a.localeCompare(b))
       .map((c) => `* \`!${c}\``)
-      .join('\n');
+      .join("\n");
 
     void this.#msg.author.send(help).catch();
     return Promise.resolve();

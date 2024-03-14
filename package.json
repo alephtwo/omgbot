@@ -6,7 +6,9 @@
   "scripts": {
     "start": "npm run compile && node target/server.js",
     "compile": "tsc",
-    "lint": "eslint src/** && prettier --check .",
+    "lint:ts": "eslint .",
+    "prettier": "prettier --check .",
+    "lint": "npm run lint:ts && npm run prettier",
     "format": "prettier --write .",
     "test": "mocha"
   },
@@ -31,19 +33,19 @@
     "zlib-sync": "0.1.9"
   },
   "devDependencies": {
-    "@types/chai": "4.3.11",
+    "@types/chai": "4.3.12",
     "@types/glob": "8.1.0",
     "@types/mocha": "10.0.6",
-    "@types/node": "20.11.0",
+    "@types/node": "20.11.27",
     "@types/ws": "8.5.10",
-    "@typescript-eslint/eslint-plugin": "6.18.1",
-    "@typescript-eslint/parser": "6.18.1",
-    "chai": "5.0.0",
-    "eslint": "8.56.0",
-    "mocha": "10.2.0",
-    "prettier": "3.1.1",
+    "chai": "5.1.0",
+    "eslint": "8.57.0",
+    "globals": "14.0.0",
+    "mocha": "10.3.0",
+    "prettier": "3.2.5",
     "strong-mock": "8.0.1",
-    "tsx": "4.7.0",
-    "typescript": "5.3.3"
+    "tsx": "4.7.1",
+    "typescript": "5.4.2",
+    "typescript-eslint": "7.2.0"
   }
 }

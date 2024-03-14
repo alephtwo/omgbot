@@ -10,6 +10,7 @@
     "prettier": "prettier --check .",
     "lint": "npm run lint:ts && npm run prettier",
     "format": "prettier --write .",
+    "mdl": "markdownlint .",
     "test": "mocha"
   },
   "repository": {
@@ -41,6 +42,8 @@
     "chai": "5.1.0",
     "eslint": "8.57.0",
     "globals": "14.0.0",
+    "markdownlint": "0.33.0",
+    "markdownlint-cli": "0.39.0",
     "mocha": "10.3.0",
     "prettier": "3.2.5",
     "strong-mock": "8.0.1",

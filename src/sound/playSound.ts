@@ -11,14 +11,18 @@ import { StageChannel, VoiceChannel } from "discord.js";
 
 const player = createAudioPlayer();
 
-export function playSound(channel: VoiceChannel | StageChannel, sound: string): void {
+export function playSound(
+  channel: VoiceChannel | StageChannel,
+  sound: string,
+): void {
   const audio = createAudioResource(sound, { inputType: StreamType.Arbitrary });
 
   const connection = joinVoiceChannel({
     channelId: channel.id,
     guildId: channel.guild.id,
     // This cast will probably not always 100% match, but it should never _fail_
-    adapterCreator: channel.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
+    adapterCreator: channel.guild
+      .voiceAdapterCreator as DiscordGatewayAdapterCreator,
   });
   connection.subscribe(player);
 
@@ -29,7 +33,10 @@ export function playSound(channel: VoiceChannel | StageChannel, sound: string): 
   });
 
   player.on("stateChange", (_prev, next) => {
-    if (next.status === AudioPlayerStatus.Idle && connection.state.status !== VoiceConnectionStatus.Destroyed) {
+    if (
+      next.status === AudioPlayerStatus.Idle &&
+      connection.state.status !== VoiceConnectionStatus.Destroyed
+    ) {
       connection.destroy();
     }
   });

@@ -25,7 +25,9 @@ describe("parseBangCommand", () => {
   });
 
   it("command can be present within string", () => {
-    const { parsed, command } = parseBangCommand(mockMessage("you should add !omg"));
+    const { parsed, command } = parseBangCommand(
+      mockMessage("you should add !omg"),
+    );
     assert.equal(parsed, "omg");
     assert.instanceOf(command, PlaySoundFromCategoryCommand);
   });

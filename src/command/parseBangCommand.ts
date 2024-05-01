@@ -8,7 +8,10 @@ import PlaySoundFromCategoryCommand from "./commands/PlaySoundFromCategoryComman
 
 const categories = getAllCategories();
 
-export function parseBangCommand(msg: Message): { parsed?: string; command?: Command } {
+export function parseBangCommand(msg: Message): {
+  parsed?: string;
+  command?: Command;
+} {
   // Find if there is any string that might be a command
   const commands = msg.content.split(" ").filter((c) => c.startsWith("!"));
 
@@ -26,7 +29,10 @@ export function parseBangCommand(msg: Message): { parsed?: string; command?: Com
     case "help":
       return { parsed: command, command: new HelpCommand(msg) };
     default:
-      return { parsed: command, command: playSoundIfCategoryExists(command, msg) };
+      return {
+        parsed: command,
+        command: playSoundIfCategoryExists(command, msg),
+      };
   }
 }
 

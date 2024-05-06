@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsx target/src/server.js",
+    "start": "npm run compile && node target/server.js",
     "compile": "tsc",
     "lint:ts": "eslint .",
     "prettier": "prettier --check .",

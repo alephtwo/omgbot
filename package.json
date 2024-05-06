@@ -26,9 +26,9 @@
   "homepage": "https://github.com/alephtwo/omgbot#readme",
   "dependencies": {
     "@discordjs/opus": "0.9.0",
-    "@discordjs/voice": "0.16.1",
+    "@discordjs/voice": "0.17.0",
     "bufferutil": "4.0.8",
-    "discord.js": "14.14.1",
+    "discord.js": "14.15.2",
     "glob": "10.3.12",
     "sodium": "3.0.2",
     "utf-8-validate": "6.0.3",
@@ -37,8 +37,7 @@
   "devDependencies": {
     "@stryker-mutator/core": "8.2.6",
     "@stryker-mutator/mocha-runner": "8.2.6",
-    "@types/chai": "4.3.14",
-    "@types/glob": "8.1.0",
+    "@types/chai": "4.3.16",
     "@types/mocha": "10.0.6",
     "@types/node": "20.12.8",
     "@types/ws": "8.5.10",
@@ -50,7 +49,7 @@
     "mocha": "10.4.0",
     "prettier": "3.2.5",
     "strong-mock": "8.0.1",
-    "tsx": "4.8.2",
+    "tsx": "4.9.3",
     "typescript": "5.4.5",
     "typescript-eslint": "7.8.0"
   }

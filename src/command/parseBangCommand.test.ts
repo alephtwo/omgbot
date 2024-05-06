@@ -1,9 +1,9 @@
 import { Message } from "discord.js";
-import { parseBangCommand } from "../../src/command/parseBangCommand";
+import { parseBangCommand } from "./parseBangCommand";
 import { mock, when } from "strong-mock";
-import PlayRandomSoundCommand from "../../src/command/commands/PlayRandomSoundCommand";
+import PlayRandomSoundCommand from "./commands/PlayRandomSoundCommand";
 import { assert } from "chai";
-import PlaySoundFromCategoryCommand from "../../src/command/commands/PlaySoundFromCategoryCommand";
+import PlaySoundFromCategoryCommand from "./commands/PlaySoundFromCategoryCommand";
 
 describe("parseBangCommand", () => {
   it("No prefix gives null", () => {

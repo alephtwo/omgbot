@@ -1,5 +1,4 @@
 {
   "extension": ["ts"],
-  "require": "tsx",
-  "recursive": true
+  "require": "tsx"
 }

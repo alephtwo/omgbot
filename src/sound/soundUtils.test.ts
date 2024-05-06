@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { globSync } from "glob";
 import * as path from "path";
-import { getAllCategories } from "../../src/sound/soundUtils";
+import { getAllCategories } from "./soundUtils";
 
 describe("Sound Utils", () => {
   it("Get all categories returns everything", () => {

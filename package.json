@@ -11,7 +11,7 @@
     "lint": "npm run lint:ts && npm run prettier",
     "format": "prettier --write .",
     "mdl": "markdownlint .",
-    "test": "mocha",
+    "test": "mocha src/**/*.test.ts",
     "mutate": "stryker run"
   },
   "repository": {

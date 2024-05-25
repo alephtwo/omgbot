@@ -5,6 +5,7 @@ import HelpCommand from "./commands/HelpCommand";
 import { InvalidCommand } from "./commands/InvalidCommand";
 import PlayRandomSoundCommand from "./commands/PlayRandomSoundCommand";
 import PlaySoundFromCategoryCommand from "./commands/PlaySoundFromCategoryCommand";
+import StatsCommand from "./commands/StatsCommand";
 
 const categories = getAllCategories();
 
@@ -28,6 +29,8 @@ export function parseBangCommand(msg: Message): {
       return { parsed: command, command: new PlayRandomSoundCommand(msg) };
     case "help":
       return { parsed: command, command: new HelpCommand(msg) };
+    case "stats":
+      return { parsed: command, command: new StatsCommand(msg) };
     default:
       return {
         parsed: command,

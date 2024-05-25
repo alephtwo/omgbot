@@ -16,12 +16,7 @@ export default class HelpCommand implements Command {
       .sort((a: string, b: string) => a.localeCompare(b))
       .map((c) => `\`!${c}\``);
 
-    void this.#msg
-      .reply({
-        content: unorderedList(help),
-        options: { ephemeral: true },
-      })
-      .catch();
+    void this.#msg.author.send(unorderedList(help)).catch();
     return Promise.resolve();
   }
 }

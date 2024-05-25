@@ -14,7 +14,7 @@ export default class HelpCommand implements Command {
   run() {
     const help = Array.from(categories)
       .sort((a: string, b: string) => a.localeCompare(b))
-      .map((c) => `* \`!${c}\``);
+      .map((c) => `\`!${c}\``);
 
     void this.#msg
       .reply({

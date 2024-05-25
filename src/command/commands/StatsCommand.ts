@@ -1,4 +1,4 @@
-import { Message, unorderedList } from "discord.js";
+import { Message, bold } from "discord.js";
 import Command from "./Command";
 import { globSync } from "glob";
 import { SOUND_DIR } from "../../sound/soundUtils";
@@ -31,16 +31,17 @@ export default class StatsCommand implements Command {
 
   private buildMessage(counts: Array<{ sound: string; count: number }>) {
     const total = counts.map((a) => a.count).reduce((a, b) => a + b);
-    const top5 = counts
+    const top3 = counts
       .toSorted((a, b) => b.count - a.count)
-      .slice(0, 5)
+      .slice(0, 3)
       .map((s) => `${s.sound} (${s.count})`);
 
     const lines = [
-      `There are ${total} total sounds.`,
-      "",
-      "Top 5:",
-      unorderedList(top5),
+      `There are ${bold(total.toString())} total sounds.`,
+      bold("Top 3:"),
+      `:first_place: ${top3[0]}`,
+      `:second_place: ${top3[1]}`,
+      `:third_place: ${top3[2]}`,
     ];
     return lines.join("\n");
   }

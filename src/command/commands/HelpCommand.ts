@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, unorderedList } from "discord.js";
 import { getAllCategories } from "../../sound/soundUtils";
 import Command from "./Command";
 
@@ -14,10 +14,14 @@ export default class HelpCommand implements Command {
   run() {
     const help = Array.from(categories)
       .sort((a: string, b: string) => a.localeCompare(b))
-      .map((c) => `* \`!${c}\``)
-      .join("\n");
+      .map((c) => `* \`!${c}\``);
 
-    void this.#msg.author.send(help).catch();
+    void this.#msg
+      .reply({
+        content: unorderedList(help),
+        options: { ephemeral: true },
+      })
+      .catch();
     return Promise.resolve();
   }
 }

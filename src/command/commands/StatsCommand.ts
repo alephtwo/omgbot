@@ -37,7 +37,7 @@ export default class StatsCommand implements Command {
       .map((s) => `${s.sound} (${s.count})`);
 
     const lines = [
-      `There are ${bold(total.toString())} total sounds.`,
+      `There are ${bold(total.toString())} total sounds across ${bold(counts.length.toString())} commands.`,
       bold("Top 3:"),
       `:first_place: ${top3[0]}`,
       `:second_place: ${top3[1]}`,

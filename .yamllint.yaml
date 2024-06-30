@@ -4,6 +4,7 @@ ignore:
   - "/node_modules"
   - "/target"
   - "/sounds"
+  - "/pnpm-lock.yaml"
 rules:
   truthy:
     check-keys: false

@@ -1,3 +1,4 @@
 #! /usr/bin/env zsh
 . $NVM_DIR/nvm.sh
-npm start
+
+$HOME/.asdf/shims/pnpm start

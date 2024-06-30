@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run compile && node target/server.js",
+    "start": "pnpm compile && node target/server.js",
     "compile": "tsc",
     "lint:ts": "eslint .",
     "prettier": "prettier --check .",
-    "lint": "npm run lint:ts && npm run prettier",
+    "lint": "pnpm lint:ts && pnpm prettier",
     "format": "prettier --write .",
     "mdl": "markdownlint .",
     "test": "mocha src/**/*.test.ts",

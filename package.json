@@ -29,7 +29,7 @@
     "@discordjs/voice": "0.17.0",
     "bufferutil": "4.0.8",
     "discord.js": "14.15.3",
-    "glob": "10.4.2",
+    "glob": "11.0.0",
     "sodium-native": "4.1.1",
     "utf-8-validate": "6.0.4",
     "zlib-sync": "0.1.9"
@@ -39,18 +39,18 @@
     "@stryker-mutator/mocha-runner": "8.2.6",
     "@types/chai": "4.3.16",
     "@types/mocha": "10.0.7",
-    "@types/node": "20.14.9",
-    "@types/ws": "8.5.10",
+    "@types/node": "22.0.0",
+    "@types/ws": "8.5.11",
     "chai": "5.1.1",
-    "eslint": "9.6.0",
-    "globals": "15.6.0",
+    "eslint": "9.8.0",
+    "globals": "15.8.0",
     "markdownlint": "0.34.0",
     "markdownlint-cli": "0.41.0",
-    "mocha": "10.5.2",
-    "prettier": "3.3.2",
+    "mocha": "10.7.0",
+    "prettier": "3.3.3",
     "strong-mock": "9.0.0",
-    "tsx": "4.16.0",
+    "tsx": "4.16.2",
     "typescript": "5.4.5",
-    "typescript-eslint": "8.0.0-alpha.30"
+    "typescript-eslint": "8.0.0-alpha.55"
   }
 }

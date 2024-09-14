@@ -1,5 +1,5 @@
-import { Message } from "discord.js";
 import { parseBangCommand } from "../command/parseBangCommand";
+import { Message } from "discord.js";
 
 export function onMessageCreate(msg: Message) {
   // If it's not from a guild, don't bother doing anything.

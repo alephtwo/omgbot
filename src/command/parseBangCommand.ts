@@ -16,7 +16,7 @@ export function parseBangCommand(msg: Message): {
   // Find if there is any string that might be a command
   const commands = msg.content.split(" ").filter((c) => c.startsWith("!"));
 
-  // If there aren't any commands, just bail out
+  // If there aren't any commands, just bail outa
   if (commands.length === 0) {
     return {};
   }

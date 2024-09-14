@@ -1,4 +1,4 @@
-import { Message, bold } from "discord.js";
+import { ChannelType, Message, bold } from "discord.js";
 import Command from "./Command";
 import { globSync } from "glob";
 import { SOUND_DIR } from "../../sound/soundUtils";
@@ -18,11 +18,13 @@ export default class StatsCommand implements Command {
       count: this.countSounds(dir),
     }));
 
-    this.#msg.channel
-      .send({
-        content: this.buildMessage(counts),
-      })
-      .catch(console.error);
+    const channel = this.#msg.channel;
+    if (channel.type !== ChannelType.GuildText) {
+      console.error("Couldn't send stats, no channel");
+      return;
+    }
+
+    channel.send({ content: this.buildMessage(counts) }).catch(console.error);
   }
 
   private countSounds(dir: string): number {

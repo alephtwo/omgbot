@@ -17,6 +17,5 @@ export default class HelpCommand implements Command {
       .map((c) => `\`!${c}\``);
 
     void this.#msg.author.send(unorderedList(help)).catch();
-    return Promise.resolve();
   }
 }

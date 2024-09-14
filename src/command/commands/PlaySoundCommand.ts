@@ -1,4 +1,4 @@
-import { Message, AttachmentBuilder } from "discord.js";
+import { Message, AttachmentBuilder, ChannelType } from "discord.js";
 import { playSound } from "../../sound/playSound";
 import Command from "./Command";
 
@@ -14,15 +14,21 @@ export default abstract class PlaySoundCommand implements Command {
   run() {
     const sound = this.pickSound();
 
-    // If the user isn't in a voice channel let's send them the file.
     const channel = this.#msg.member?.voice.channel;
-
-    if (!channel) {
-      const attachment = new AttachmentBuilder(sound);
-      void this.#msg.channel.send({ files: [attachment] }).catch();
+    // If the user is in a voice channel, play it!
+    if (channel !== null && channel !== undefined) {
+      void playSound(channel, sound);
       return;
     }
 
-    void playSound(channel, sound);
+    // fall back on the text channel
+    const messageChannel = this.#msg.channel;
+    if (messageChannel.type !== ChannelType.GuildText) {
+      console.error("Couldn't play sound, no channel");
+      return;
+    }
+
+    const attachment = new AttachmentBuilder(sound);
+    void messageChannel.send({ files: [attachment] }).catch();
   }
 }

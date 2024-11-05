@@ -1,4 +1,4 @@
-/target
+/dist
 /sounds
 /.stryker-tmp
 /pnpm-lock.yaml

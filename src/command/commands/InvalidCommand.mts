@@ -1,4 +1,4 @@
-import Command from "./Command";
+import Command from "./Command.mjs";
 
 export class InvalidCommand implements Command {
   #command: string;

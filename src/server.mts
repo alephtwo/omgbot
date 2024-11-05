@@ -1,9 +1,9 @@
 import * as Discord from "discord.js";
 import { Events, GatewayIntentBits } from "discord.js";
-import { onMessageCreate } from "./events/onMessageCreate";
-import { onReady } from "./events/onReady";
-import { playSound } from "./sound/playSound";
-import { pickSound } from "./sound/soundUtils";
+import { onMessageCreate } from "./events/onMessageCreate.mjs";
+import { onReady } from "./events/onReady.mjs";
+import { playSound } from "./sound/playSound.mjs";
+import { pickSound } from "./sound/soundUtils.mjs";
 
 const client = new Discord.Client({
   intents: [

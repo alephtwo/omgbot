@@ -1,8 +1,9 @@
 // @ts-check
-/** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */
+/**
+ * @type {import("@stryker-mutator/api/core").PartialStrykerOptions}
+ */
 export default {
-  testRunner: "mocha",
-  mochaOptions: {
-    spec: ["test/**/*.ts"],
-  },
+  testRunner: "vitest",
+  packageManager: "pnpm",
+  plugins: ["@stryker-mutator/vitest-runner"],
 };

@@ -1,11 +1,11 @@
-import { expect } from "chai";
+import { describe, it, expect } from "vitest";
 import { globSync } from "glob";
 import * as path from "path";
-import { getAllCategories } from "./soundUtils";
+import { getAllCategories } from "./soundUtils.mjs";
 
 describe("Sound Utils", () => {
   it("Get all categories returns everything", () => {
-    const dir = path.join(__dirname, "..", "..", "sounds", "*");
+    const dir = path.join(import.meta.dirname, "..", "..", "sounds", "*");
     const expected = new Set(globSync(dir).map((e) => path.basename(e)));
 
     const sounds = getAllCategories();

@@ -1,8 +1,8 @@
 import { ChannelType, Message, bold } from "discord.js";
-import Command from "./Command";
+import Command from "./Command.mjs";
 import { globSync } from "glob";
-import { SOUND_DIR } from "../../sound/soundUtils";
 import * as path from "path";
+import { getSoundDir } from "../../sound/soundUtils.mjs";
 
 export default class StatsCommand implements Command {
   #msg: Message;
@@ -12,7 +12,7 @@ export default class StatsCommand implements Command {
   }
 
   run() {
-    const dirs = globSync(path.join(SOUND_DIR, "*"));
+    const dirs = globSync(path.join(getSoundDir(), "*"));
     const counts = dirs.map((dir) => ({
       sound: path.basename(dir),
       count: this.countSounds(dir),

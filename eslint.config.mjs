@@ -5,7 +5,7 @@ import globals from "globals";
 export default tseslint.config(
   eslint.configs.recommended,
   {
-    ignores: ["target/**", "sounds/**"],
+    ignores: ["dist/**", "sounds/**", ".stryker-tmp"],
   },
   {
     files: ["**/*.ts", "**/*.tsx"],

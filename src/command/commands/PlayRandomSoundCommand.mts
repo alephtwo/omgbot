@@ -1,5 +1,5 @@
-import { pickRandomSound } from "../../sound/soundUtils";
-import PlaySoundCommand from "./PlaySoundCommand";
+import { pickRandomSound } from "../../sound/soundUtils.mjs";
+import PlaySoundCommand from "./PlaySoundCommand.mjs";
 
 export default class PlayRandomSoundCommand extends PlaySoundCommand {
   pickSound() {

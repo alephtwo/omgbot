@@ -1,6 +1,6 @@
 import { Message, unorderedList } from "discord.js";
-import { getAllCategories } from "../../sound/soundUtils";
-import Command from "./Command";
+import { getAllCategories } from "../../sound/soundUtils.mjs";
+import Command from "./Command.mjs";
 
 const categories = getAllCategories();
 

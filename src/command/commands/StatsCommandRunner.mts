@@ -1,5 +1,5 @@
 import { mock } from "strong-mock";
-import StatsCommand from "./StatsCommand";
+import StatsCommand from "./StatsCommand.mjs";
 import { Message } from "discord.js";
 
 const message = mock<Message>();

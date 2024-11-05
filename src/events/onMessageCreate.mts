@@ -1,4 +1,4 @@
-import { parseBangCommand } from "../command/parseBangCommand";
+import { parseBangCommand } from "../command/parseBangCommand.mjs";
 import { Message } from "discord.js";
 
 export function onMessageCreate(msg: Message) {

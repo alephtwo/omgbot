@@ -1,41 +1,41 @@
 import { Message } from "discord.js";
-import { parseBangCommand } from "./parseBangCommand";
+import { parseBangCommand } from "./parseBangCommand.mjs";
+import { describe, it, expect } from "vitest";
 import { mock, when } from "strong-mock";
-import PlayRandomSoundCommand from "./commands/PlayRandomSoundCommand";
-import { assert } from "chai";
-import PlaySoundFromCategoryCommand from "./commands/PlaySoundFromCategoryCommand";
+import PlayRandomSoundCommand from "./commands/PlayRandomSoundCommand.mjs";
+import PlaySoundFromCategoryCommand from "./commands/PlaySoundFromCategoryCommand.mjs";
 
 describe("parseBangCommand", () => {
   it("No prefix gives null", () => {
     const { parsed, command } = parseBangCommand(mockMessage("hello world!"));
-    assert.isUndefined(parsed);
-    assert.isUndefined(command);
+    expect(parsed).toBeUndefined();
+    expect(command).toBeUndefined();
   });
 
   it("! prefix gives command", () => {
     const { parsed, command } = parseBangCommand(mockMessage("!omg"));
-    assert.equal(parsed, "omg");
-    assert.instanceOf(command, PlaySoundFromCategoryCommand);
+    expect(parsed).toEqual("omg");
+    expect(command).toBeInstanceOf(PlaySoundFromCategoryCommand);
   });
 
   it("lots of typing gives first command", () => {
     const { parsed, command } = parseBangCommand(mockMessage("!omg !a !b !c"));
-    assert.equal(parsed, "omg");
-    assert.instanceOf(command, PlaySoundFromCategoryCommand);
+    expect(parsed).toEqual("omg");
+    expect(command).toBeInstanceOf(PlaySoundFromCategoryCommand);
   });
 
   it("command can be present within string", () => {
     const { parsed, command } = parseBangCommand(
       mockMessage("you should add !omg"),
     );
-    assert.equal(parsed, "omg");
-    assert.instanceOf(command, PlaySoundFromCategoryCommand);
+    expect(parsed).toEqual("omg");
+    expect(command).toBeInstanceOf(PlaySoundFromCategoryCommand);
   });
 
   it("! by itself parses", () => {
     const { parsed, command } = parseBangCommand(mockMessage("!"));
-    assert.equal(parsed, "");
-    assert.instanceOf(command, PlayRandomSoundCommand);
+    expect(parsed).toEqual("");
+    expect(command).toBeInstanceOf(PlayRandomSoundCommand);
   });
 });
 

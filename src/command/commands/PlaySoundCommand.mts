@@ -1,6 +1,6 @@
 import { Message, AttachmentBuilder, ChannelType } from "discord.js";
-import { playSound } from "../../sound/playSound";
-import Command from "./Command";
+import { playSound } from "../../sound/playSound.mjs";
+import Command from "./Command.mjs";
 
 export default abstract class PlaySoundCommand implements Command {
   #msg: Message;

@@ -1,9 +1,14 @@
 {
   "compilerOptions": {
-    "outDir": "./target",
+    "outDir": "./dist",
     "sourceMap": false,
-    "module": "CommonJS",
-    "lib": ["ES2023"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": [
+      "ES2023",
+      // Unfortunately, vitest needs the DOM
+      "DOM"
+    ],
     "target": "ES2022",
     "noImplicitAny": true,
     "strictNullChecks": true,

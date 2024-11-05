@@ -4,14 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "pnpm compile && node target/server.js",
-    "compile": "tsc",
+    "start": "pnpm build && node dist/server.mjs",
+    "build": "tsx bin/build.mts",
     "lint:ts": "eslint .",
     "prettier": "prettier --check .",
-    "lint": "pnpm lint:ts && pnpm prettier",
+    "lint": "pnpm lint:ts && pnpm prettier && pnpm lint:md",
+    "lint:md": "markdownlint .",
     "format": "prettier --write .",
-    "mdl": "markdownlint .",
-    "test": "mocha src/**/*.test.ts",
+    "test": "vitest run",
     "mutate": "stryker run"
   },
   "repository": {
@@ -36,21 +36,19 @@
   },
   "devDependencies": {
     "@stryker-mutator/core": "8.6.0",
-    "@stryker-mutator/mocha-runner": "8.6.0",
-    "@types/chai": "5.0.1",
-    "@types/mocha": "10.0.9",
+    "@stryker-mutator/vitest-runner": "8.6.0",
     "@types/node": "22.9.0",
     "@types/ws": "8.5.13",
-    "chai": "5.1.2",
+    "esbuild": "0.24.0",
     "eslint": "9.14.0",
     "globals": "15.12.0",
     "markdownlint": "0.36.1",
     "markdownlint-cli": "0.42.0",
-    "mocha": "10.8.2",
     "prettier": "3.3.3",
     "strong-mock": "9.0.0",
     "tsx": "4.19.2",
     "typescript": "5.6.3",
-    "typescript-eslint": "8.13.0"
+    "typescript-eslint": "8.13.0",
+    "vitest": "2.1.4"
   }
 }

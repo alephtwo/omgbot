@@ -1,11 +1,11 @@
 import { Message } from "discord.js";
-import { getAllCategories } from "../sound/soundUtils";
-import Command from "./commands/Command";
-import HelpCommand from "./commands/HelpCommand";
-import { InvalidCommand } from "./commands/InvalidCommand";
-import PlayRandomSoundCommand from "./commands/PlayRandomSoundCommand";
-import PlaySoundFromCategoryCommand from "./commands/PlaySoundFromCategoryCommand";
-import StatsCommand from "./commands/StatsCommand";
+import { getAllCategories } from "../sound/soundUtils.mjs";
+import Command from "./commands/Command.mjs";
+import HelpCommand from "./commands/HelpCommand.mjs";
+import { InvalidCommand } from "./commands/InvalidCommand.mjs";
+import PlayRandomSoundCommand from "./commands/PlayRandomSoundCommand.mjs";
+import PlaySoundFromCategoryCommand from "./commands/PlaySoundFromCategoryCommand.mjs";
+import StatsCommand from "./commands/StatsCommand.mjs";
 
 const categories = getAllCategories();
 

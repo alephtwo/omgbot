@@ -43,5 +43,5 @@ function playSoundIfCategoryExists(command: string, msg: Message) {
   if (categories.has(command)) {
     return new PlaySoundFromCategoryCommand(msg, command);
   }
-  return new InvalidCommand(command);
+  return new InvalidCommand(msg, command);
 }

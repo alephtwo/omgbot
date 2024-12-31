@@ -13,6 +13,7 @@ export default abstract class PlaySoundCommand implements Command {
 
   run() {
     const sound = this.pickSound();
+    console.log(`\`${this.#msg.author.username}\` played sound \`${sound}\``);
 
     const channel = this.#msg.member?.voice.channel;
     // If the user is in a voice channel, play it!

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "pnpm build && node dist/server.mjs",
-    "build": "tsx bin/build.mts",
+    "typecheck": "tsc --noEmit",
+    "build": "pnpm typecheck && tsx bin/build.mts",
     "lint:ts": "eslint .",
     "prettier": "prettier --check .",
     "lint": "pnpm lint:ts && pnpm prettier && pnpm lint:md",

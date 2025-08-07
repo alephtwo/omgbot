@@ -38,7 +38,7 @@
   "devDependencies": {
     "@stryker-mutator/core": "9.0.1",
     "@stryker-mutator/vitest-runner": "9.0.1",
-    "@types/node": "24.1.0",
+    "@types/node": "24.2.0",
     "@types/ws": "8.18.1",
     "esbuild": "0.25.8",
     "eslint": "9.32.0",
@@ -48,8 +48,8 @@
     "prettier": "3.6.2",
     "strong-mock": "9.0.1",
     "tsx": "4.20.3",
-    "typescript": "5.8.3",
-    "typescript-eslint": "8.38.0",
+    "typescript": "5.9.2",
+    "typescript-eslint": "8.39.0",
     "vitest": "3.2.4"
   }
 }

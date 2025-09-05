@@ -27,29 +27,29 @@
   "homepage": "https://github.com/alephtwo/omgbot#readme",
   "dependencies": {
     "@discordjs/opus": "0.10.0",
-    "@discordjs/voice": "0.18.0",
+    "@discordjs/voice": "0.19.0",
     "bufferutil": "4.0.9",
-    "discord.js": "14.21.0",
+    "discord.js": "14.22.1",
     "glob": "11.0.3",
-    "sodium-native": "5.0.6",
+    "sodium-native": "5.0.8",
     "utf-8-validate": "6.0.5",
     "zlib-sync": "0.1.10"
   },
   "devDependencies": {
-    "@stryker-mutator/core": "9.0.1",
-    "@stryker-mutator/vitest-runner": "9.0.1",
-    "@types/node": "24.3.0",
+    "@stryker-mutator/core": "9.1.1",
+    "@stryker-mutator/vitest-runner": "9.1.1",
+    "@types/node": "24.3.1",
     "@types/ws": "8.18.1",
     "esbuild": "0.25.9",
-    "eslint": "9.33.0",
+    "eslint": "9.35.0",
     "globals": "16.3.0",
     "markdownlint": "0.38.0",
     "markdownlint-cli": "0.45.0",
     "prettier": "3.6.2",
     "strong-mock": "9.0.1",
-    "tsx": "4.20.4",
+    "tsx": "4.20.5",
     "typescript": "5.9.2",
-    "typescript-eslint": "8.39.1",
+    "typescript-eslint": "8.42.0",
     "vitest": "3.2.4"
   }
 }

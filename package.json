@@ -43,14 +43,14 @@
     "@types/ws": "8.18.1",
     "esbuild": "0.25.9",
     "eslint": "9.35.0",
-    "globals": "16.3.0",
+    "globals": "16.4.0",
     "markdownlint": "0.38.0",
     "markdownlint-cli": "0.45.0",
     "prettier": "3.6.2",
     "strong-mock": "9.0.1",
     "tsx": "4.20.5",
     "typescript": "5.9.2",
-    "typescript-eslint": "8.42.0",
+    "typescript-eslint": "8.43.0",
     "vitest": "3.2.4"
   }
 }

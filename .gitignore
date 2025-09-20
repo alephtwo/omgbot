@@ -1,7 +1,1 @@
-/node_modules
-/dist
-/.stryker-tmp
-/reports
-
-*.iml
-/.idea
+/target

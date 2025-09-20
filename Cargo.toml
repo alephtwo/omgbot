@@ -1,0 +1,10 @@
+[package]
+name = "omgbot"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+serenity = { version = "0.12", features = ["voice"] }
+songbird = "0.5"
+symphonia = { version = "0.5.4", features = ["mp3"] }
+tokio = { version = "1.47.1", features = ["rt-multi-thread"] }

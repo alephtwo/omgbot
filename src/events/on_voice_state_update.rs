@@ -1,4 +1,6 @@
+use crate::events::track_end::LeaveAfterPlaying;
 use serenity::all::{Context, VoiceState};
+use songbird::{Event, TrackEvent, input::File};
 
 // This code is extremely cursed.
 // It is cursed code.
@@ -9,18 +11,57 @@ pub async fn handle(ctx: Context, old: Option<VoiceState>, new: VoiceState) {
         return;
     }
 
-    // Determine which channels we're dealing with.
-    let previous_channel = old.and_then(|s| s.channel_id);
-    let current_channel = match new.channel_id {
-        Some(vs) => vs,
+    // If by some act of god this didn't happen in a guild, stop.
+    let guild_id = match new.guild_id {
+        Some(id) => id,
         None => {
-            // If the user isn't in a voice channel anymore, then we're done
             return;
         }
     };
 
-    // If the user changed channels, print it out
-    if previous_channel != Some(current_channel) {
-        println!("Joined Channel: {}", current_channel);
+    // If the user was in a voice channel before, stop.
+    // We only want to do something if they join voice for the first time.
+    if old.is_some() {
+        return;
     }
+
+    // Figure out which channel the user is in.
+    let current_channel = match new.channel_id {
+        Some(vs) => vs,
+        None => {
+            // If the user _isn't_ in a voice channel anymore, then we're done.
+            return;
+        }
+    };
+
+    println!(
+        "{} joined channel {} on guild {}",
+        new.user_id, current_channel, guild_id
+    );
+
+    // Join that channel.
+    let manager = songbird::get(&ctx)
+        .await
+        .expect("Failed to instantiate songbird")
+        .clone();
+
+    let handler_lock = match manager.join(guild_id, current_channel).await {
+        Ok(lock) => lock,
+        Err(e) => {
+            eprintln!("{e:?}");
+            return;
+        }
+    };
+
+    let mut handler = handler_lock.lock().await;
+    let input = File::new("./sounds/greeting/HIRyS_1.mp3");
+    let track_handle = handler.play(input.into());
+
+    let _ = track_handle.add_event(
+        Event::Track(TrackEvent::End),
+        LeaveAfterPlaying {
+            manager: manager.clone(),
+            guild: guild_id,
+        },
+    );
 }

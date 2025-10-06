@@ -1,6 +1,6 @@
+mod audio;
 mod commands;
 mod events;
-mod util;
 
 use clap::Parser;
 use serenity::{
@@ -11,7 +11,7 @@ use serenity::{
 use songbird::SerenityInit;
 use std::path::PathBuf;
 
-pub const COMMAND_PREFIX: &str = "~";
+pub const COMMAND_PREFIX: &str = "!";
 
 #[derive(Parser, Debug)]
 struct Cli {
@@ -28,9 +28,10 @@ struct Cli {
 async fn main() {
     let args = Cli::parse();
 
-    let intents = GatewayIntents::GUILD_MESSAGES
-        | GatewayIntents::DIRECT_MESSAGES
+    let intents = GatewayIntents::GUILDS
         | GatewayIntents::GUILD_VOICE_STATES
+        | GatewayIntents::GUILD_MESSAGES
+        | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;
 
     let mut client = Client::builder(&args.discord_token, intents)
@@ -61,7 +62,7 @@ impl EventHandler for Handler {
     }
 
     async fn voice_state_update(&self, ctx: Context, old: Option<VoiceState>, new: VoiceState) {
-        events::on_voice_state_update::handle(ctx, old, new).await
+        events::on_voice_state_update::handle(ctx, old, new, &self.sounds_dir).await
     }
 }
 

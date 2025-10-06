@@ -1,6 +1,7 @@
-use crate::util::{get_category_name, list_category_directories, list_children};
 use serenity::all::{Context, Message, MessageBuilder};
 use std::{collections::HashMap, path::Path};
+
+use crate::audio::{get_category_name, list_category_directories, list_children};
 
 pub async fn report(ctx: Context, msg: Message, sounds_dir: &Path) {
     let stats = count_per_category(sounds_dir);

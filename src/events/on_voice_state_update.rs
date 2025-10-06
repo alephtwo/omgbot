@@ -1,11 +1,11 @@
-use crate::events::track_end::LeaveAfterPlaying;
+use crate::audio::{choose_sound, play_sound};
 use serenity::all::{Context, VoiceState};
-use songbird::{Event, TrackEvent, input::File};
+use std::path::Path;
 
 // This code is extremely cursed.
 // It is cursed code.
 // Remove it or keep it at your own peril.
-pub async fn handle(ctx: Context, old: Option<VoiceState>, new: VoiceState) {
+pub async fn handle(ctx: Context, old: Option<VoiceState>, new: VoiceState, sounds_dir: &Path) {
     // If it's us, we need to stop.
     if new.user_id == ctx.cache.current_user().id {
         return;
@@ -39,29 +39,6 @@ pub async fn handle(ctx: Context, old: Option<VoiceState>, new: VoiceState) {
         new.user_id, current_channel, guild_id
     );
 
-    // Join that channel.
-    let manager = songbird::get(&ctx)
-        .await
-        .expect("Failed to instantiate songbird")
-        .clone();
-
-    let handler_lock = match manager.join(guild_id, current_channel).await {
-        Ok(lock) => lock,
-        Err(e) => {
-            eprintln!("{e:?}");
-            return;
-        }
-    };
-
-    let mut handler = handler_lock.lock().await;
-    let input = File::new("./sounds/greeting/HIRyS_1.mp3");
-    let track_handle = handler.play(input.into());
-
-    let _ = track_handle.add_event(
-        Event::Track(TrackEvent::End),
-        LeaveAfterPlaying {
-            manager: manager.clone(),
-            guild: guild_id,
-        },
-    );
+    let sound = choose_sound(sounds_dir, "greeting".to_string());
+    play_sound(ctx, guild_id, current_channel, sound).await;
 }

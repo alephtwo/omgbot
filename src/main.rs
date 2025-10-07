@@ -58,7 +58,7 @@ impl EventHandler for Handler {
     }
 
     async fn message(&self, ctx: Context, msg: Message) {
-        events::on_message::handle(ctx, msg, &self.sounds_dir).await
+        commands::execute_command(ctx, msg, &self.sounds_dir).await;
     }
 
     async fn voice_state_update(&self, ctx: Context, old: Option<VoiceState>, new: VoiceState) {

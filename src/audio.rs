@@ -111,7 +111,7 @@ pub async fn play_sound(
     Ok(())
 }
 
-pub fn choose_sound(soundbank: &Path, category: String) -> Result<PathBuf, anyhow::Error> {
+pub fn choose_sound(soundbank: &Path, category: &str) -> Result<PathBuf, anyhow::Error> {
     let source_dir = soundbank.join(category);
     let children = list_children(source_dir.as_path())?.filter(|f| f.is_file());
     children.choose(&mut rng()).ok_or(anyhow!("no children"))

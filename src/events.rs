@@ -56,6 +56,6 @@ pub async fn on_voice_state_update(
         guild_id
     );
 
-    let sound = choose_sound(&config.soundbank, "greeting".to_string())?;
+    let sound = choose_sound(&config.soundbank, "greeting")?;
     play_sound(ctx, guild_id, current_channel, sound, config).await
 }

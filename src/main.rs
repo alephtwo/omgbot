@@ -1,17 +1,18 @@
 mod audio;
 mod cli;
 mod commands;
+mod config;
 mod events;
 
 use crate::cli::Cli;
 use clap::Parser;
+use config::BotConfig;
 use serenity::{
     Client,
     all::{Context, EventHandler, GatewayIntents, Message, Ready, VoiceState},
     async_trait,
 };
 use songbird::SerenityInit;
-use std::path::PathBuf;
 
 pub const COMMAND_PREFIX: &str = "!";
 
@@ -42,11 +43,6 @@ async fn main() {
     if let Err(why) = client.start().await {
         tracing::error!("Client error: {why:?}");
     }
-}
-
-struct BotConfig {
-    soundbank: PathBuf,
-    volume: f32,
 }
 
 struct Handler {

@@ -34,7 +34,7 @@ pub async fn execute_command(
 
             // If it's a valid category, pick a sound and play it.
             if categories.contains(category) {
-                play_sound_from_category(ctx, msg, config, category.into()).await?;
+                play_sound_from_category(ctx, msg, config, category).await?;
                 return Ok(());
             }
 
@@ -66,7 +66,7 @@ fn parse_command(content: &str) -> Result<Option<String>, anyhow::Error> {
 
     // Find the LAST token that starts with the prefix.
     let token = content
-        .split(" ")
+        .split_whitespace()
         .filter(|f| f.starts_with(crate::COMMAND_PREFIX))
         .last()
         .ok_or(anyhow!("no command tokens somehow"))?;
@@ -99,7 +99,7 @@ async fn play_sound_from_category(
     ctx: Context,
     msg: Message,
     config: &BotConfig,
-    category: String,
+    category: &str,
 ) -> Result<(), anyhow::Error> {
     let sound = choose_sound(&config.soundbank, category)?;
     play_sound_in_response_to(ctx, msg, sound, config).await

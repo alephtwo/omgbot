@@ -29,3 +29,38 @@ fn validate_dir_exists(s: &str) -> Result<PathBuf, String> {
     }
     Ok(path)
 }
+
+#[cfg(test)]
+mod test {
+    use std::fs::File;
+
+    use tempdir::TempDir;
+
+    use super::*;
+
+    #[test]
+    fn dir_does_not_exist() {
+        assert_eq!(
+            validate_dir_exists("8626a752-24c9-491f-98ee-579e63bb64e4"),
+            Err("Directory doesn't exist: 8626a752-24c9-491f-98ee-579e63bb64e4".into())
+        );
+    }
+
+    #[test]
+    fn path_is_not_a_directory() {
+        // Create a directory containing a temporary file
+        let tmp = TempDir::new("omgbot-test").expect("unable to create tempdir");
+        let path = &tmp.path().join("test.txt");
+        File::create(path).expect("unable to create test file");
+
+        // Confirm that the file is - indeed - not a directory
+        let expected_path = path.to_str().expect("non-utf8 strings not allowed");
+        assert_eq!(
+            validate_dir_exists(expected_path),
+            Err(format!("Not a directory: {}", expected_path))
+        );
+
+        // Close the temp directory
+        tmp.close().expect("unable to close temp dir");
+    }
+}

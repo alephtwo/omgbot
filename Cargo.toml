@@ -10,4 +10,5 @@ rand = "0.9.2"
 serenity = { version = "0.12", features = ["voice"] }
 songbird = "0.5"
 symphonia = { version = "0.5.4", features = ["mp3"] }
+tempdir = "0.3.7"
 tokio = { version = "1.47.1", features = ["rt-multi-thread"] }

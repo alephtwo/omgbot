@@ -26,24 +26,27 @@ pub async fn execute_command(ctx: Context, msg: Message, config: &BotConfig) {
         category => {
             // Check if it is a valid category.
             let categories: HashSet<String> = list_categories(&config.soundbank).collect();
-            if !categories.contains(category) {
-                let result = msg
-                    .reply(
-                        &ctx.http,
-                        MessageBuilder::new()
-                            .push_bold(&msg.content)
-                            .push_line(" is not a valid command.")
-                            .build(),
-                    )
-                    .await;
 
-                if let Err(err) = result {
-                    eprintln!("Unable to reply to an invalid command that was sent: {err}");
-                }
+            // If it's a valid category, pick a sound and play it.
+            if categories.contains(category) {
+                play_sound_from_category(ctx, msg, config, category.into()).await;
+                return;
             }
 
-            // It's a valid category, so pick a sound and play it.
-            play_sound_from_category(ctx, msg, config, category.into()).await;
+            // Otherwise, upload it as a response.
+            let result = msg
+                .reply(
+                    &ctx.http,
+                    MessageBuilder::new()
+                        .push_bold(&msg.content)
+                        .push_line(" is not a valid command.")
+                        .build(),
+                )
+                .await;
+
+            if let Err(err) = result {
+                eprintln!("Unable to reply to an invalid command that was sent: {err}");
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 use crate::BotConfig;
+use anyhow::{anyhow, bail};
 use glob::glob;
 use rand::{rng, seq::IteratorRandom};
 use serenity::{
@@ -30,23 +31,13 @@ pub async fn play_sound_in_response_to(
     msg: Message,
     file: PathBuf,
     config: &BotConfig,
-) {
+) -> Result<(), anyhow::Error> {
     // Make sure this command came from a guild
-    let guild_id = match msg.guild_id {
-        Some(id) => id,
-        None => {
-            eprintln!("Not in a guild");
-            return;
-        }
-    };
-
-    let guild = match msg.guild(&ctx.cache) {
-        Some(guild) => guild.clone(),
-        None => {
-            eprintln!("Guild not in cache");
-            return;
-        }
-    };
+    let guild_id = msg.guild_id.ok_or(anyhow!("Not in a guild"))?;
+    let guild = msg
+        .guild(&ctx.cache)
+        .ok_or(anyhow!("Guild not in cache"))?
+        .clone();
 
     let voice_channel = guild
         .voice_states
@@ -61,26 +52,18 @@ pub async fn play_sound_in_response_to(
         }
         None => {
             // Try to open the file for reading
-            let opened_file: tokio::fs::File = match tokio::fs::File::open(&file).await {
-                Ok(f) => f,
-                Err(err) => {
-                    eprintln!("Failed to open sound file: {err}");
-                    let _ = msg.reply(&ctx.http, "Failed to open the sound file.").await;
-                    return;
-                }
-            };
+            let opened_file = tokio::fs::File::open(&file).await?;
 
             // They are NOT in a voice channel. Upload the sound to the
             // text channel they posted in
             let attachment = CreateAttachment::file(
                 &opened_file,
                 file.file_name()
-                    .expect("nameless file")
+                    .ok_or(anyhow!("nameless file"))?
                     .to_str()
-                    .expect("non unicode filename"),
+                    .ok_or(anyhow!("non unicode filename"))?,
             )
-            .await
-            .expect("failed to upload attachment");
+            .await?;
             let content = MessageBuilder::new().build();
             let message = CreateMessage::new()
                 .add_file(attachment)
@@ -91,7 +74,9 @@ pub async fn play_sound_in_response_to(
             let result = msg.channel_id.send_message(&ctx.http, message).await;
             if let Err(err) = result {
                 eprintln!("Error responding to command: {err}");
+                bail!(err);
             }
+            Ok(())
         }
     }
 }
@@ -102,28 +87,19 @@ pub async fn play_sound(
     channel_id: ChannelId,
     file: PathBuf,
     config: &BotConfig,
-) {
+) -> Result<(), anyhow::Error> {
     // Join that channel.
     let manager = songbird::get(&ctx)
         .await
-        .expect("Failed to instantiate songbird")
+        .ok_or(anyhow!("Songbird not initialized"))?
         .clone();
 
-    let handler_lock = match manager.join(guild_id, channel_id).await {
-        Ok(lock) => lock,
-        Err(e) => {
-            eprintln!("{e:?}");
-            return;
-        }
-    };
-
+    let handler_lock = manager.join(guild_id, channel_id).await?;
     let mut handler = handler_lock.lock().await;
     let track_handle = handler.play_only(File::new(file).into());
 
     // please don't break everyone's eardrums
-    track_handle
-        .set_volume(config.volume)
-        .expect("I am so sorry. I destroyed everyone's ears.");
+    track_handle.set_volume(config.volume)?;
 
     let _ = track_handle.add_event(
         Event::Track(TrackEvent::End),
@@ -132,41 +108,50 @@ pub async fn play_sound(
             guild: guild_id,
         },
     );
+    Ok(())
 }
 
-pub fn choose_sound(soundbank: &Path, category: String) -> PathBuf {
+pub fn choose_sound(soundbank: &Path, category: String) -> Result<PathBuf, anyhow::Error> {
     let source_dir = soundbank.join(category);
-    let children = list_children(source_dir.as_path()).filter(|f| f.is_file());
-    children.choose(&mut rng()).expect("no children")
+    let children = list_children(source_dir.as_path())?.filter(|f| f.is_file());
+    children.choose(&mut rng()).ok_or(anyhow!("no children"))
 }
 
-pub fn choose_any_sound(soundbank: &Path) -> PathBuf {
+pub fn choose_any_sound(soundbank: &Path) -> Result<PathBuf, anyhow::Error> {
     let pattern = soundbank.join("**/*");
-    let pattern_str = pattern.to_str().expect("Non-UTF8 path not supported");
+    let pattern_str = pattern
+        .to_str()
+        .ok_or(anyhow!("Non-UTF8 path not supported"))?;
 
-    let sounds = glob(pattern_str)
-        .expect("Failed to read glob pattern")
+    let sounds = glob(pattern_str)?
         .filter_map(Result::ok)
         .filter(|f| f.is_file());
 
-    sounds.choose(&mut rng()).expect("no children")
+    sounds.choose(&mut rng()).ok_or(anyhow!("no children"))
 }
 
-pub fn list_categories(soundbank: &Path) -> impl Iterator<Item = String> {
-    list_category_directories(soundbank).filter_map(|f| get_category_name(&f))
+pub fn list_categories(soundbank: &Path) -> Result<impl Iterator<Item = String>, anyhow::Error> {
+    let results = list_category_directories(soundbank)?.filter_map(|f| get_category_name(&f));
+    Ok(results)
 }
 
-pub fn list_category_directories(soundbank: &Path) -> impl Iterator<Item = PathBuf> {
-    list_children(soundbank).filter(|path| path.is_dir()) // only directories
+pub fn list_category_directories(
+    soundbank: &Path,
+) -> Result<impl Iterator<Item = PathBuf>, anyhow::Error> {
+    let results = list_children(soundbank)?
+        // only directories
+        .filter(|path| path.is_dir());
+    Ok(results)
 }
 
-pub fn list_children(path: &Path) -> impl Iterator<Item = PathBuf> {
+pub fn list_children(path: &Path) -> Result<impl Iterator<Item = PathBuf>, anyhow::Error> {
     let pattern = path.join("*");
-    let pattern_str = pattern.to_str().expect("Non-UTF8 path not supported");
-
-    glob(pattern_str)
-        .expect("Failed to read glob pattern")
-        .filter_map(Result::ok) // skip invalid entries
+    let pattern_str = pattern
+        .to_str()
+        .ok_or(anyhow!("Non-UTF8 path not supported"))?;
+    // skip invalid entries
+    let results = glob(pattern_str)?.filter_map(Result::ok);
+    Ok(results)
 }
 
 pub fn get_category_name(path: &Path) -> Option<String> {

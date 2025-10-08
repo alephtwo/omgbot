@@ -1,16 +1,17 @@
+use anyhow::{anyhow, bail};
 use serenity::all::{Context, Message, MessageBuilder};
 use std::{collections::HashMap, path::Path};
 
 use crate::audio::{get_category_name, list_category_directories, list_children};
 
-pub async fn report(ctx: Context, msg: Message, sounds_dir: &Path) {
-    let stats = count_per_category(sounds_dir);
+pub async fn report(ctx: Context, msg: Message, sounds_dir: &Path) -> Result<(), anyhow::Error> {
+    let stats = count_per_category(sounds_dir)?;
 
     let mut sorted_stats = stats.iter().collect::<Vec<_>>();
     sorted_stats.sort_by_key(|(_, s)| **s);
-    let first = sorted_stats.pop().expect("no first place");
-    let second = sorted_stats.pop().expect("no second place");
-    let third = sorted_stats.pop().expect("no third place");
+    let first = sorted_stats.pop().ok_or(anyhow!("no first place"))?;
+    let second = sorted_stats.pop().ok_or(anyhow!("no second place"))?;
+    let third = sorted_stats.pop().ok_or(anyhow!("no third place"))?;
 
     let content = MessageBuilder::new()
         .push("There are ")
@@ -26,15 +27,18 @@ pub async fn report(ctx: Context, msg: Message, sounds_dir: &Path) {
 
     let result = msg.reply(ctx.http, content).await;
     if let Err(err) = result {
-        eprintln!("Error while responding: {}", err)
+        eprintln!("Error while responding: {}", err);
+        bail!(err);
     }
+    Ok(())
 }
 
-fn count_per_category(sounds_dir: &Path) -> HashMap<String, usize> {
+fn count_per_category(sounds_dir: &Path) -> Result<HashMap<String, usize>, anyhow::Error> {
     let mut hash: HashMap<String, usize> = HashMap::new();
-    for category in list_category_directories(sounds_dir) {
-        let category_name = get_category_name(&category).expect("failed to get category name");
-        hash.insert(category_name, list_children(&category).count());
+    for category in list_category_directories(sounds_dir)? {
+        let category_name =
+            get_category_name(&category).ok_or(anyhow!("failed to get category name"))?;
+        hash.insert(category_name, list_children(&category)?.count());
     }
-    hash
+    Ok(hash)
 }

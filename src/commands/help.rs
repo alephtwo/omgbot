@@ -1,9 +1,10 @@
 use crate::audio::list_categories;
+use anyhow::bail;
 use serenity::all::{Context, CreateMessage, MessageBuilder, User};
 use std::path::Path;
 
-pub async fn run(ctx: Context, user: User, soundbank: &Path) {
-    let mut categories: Vec<String> = list_categories(soundbank).collect();
+pub async fn run(ctx: Context, user: User, soundbank: &Path) -> Result<(), anyhow::Error> {
+    let mut categories: Vec<String> = list_categories(soundbank)?.collect();
     categories.sort();
 
     let mut content = MessageBuilder::new();
@@ -16,6 +17,8 @@ pub async fn run(ctx: Context, user: User, soundbank: &Path) {
         .await;
 
     if let Err(err) = result {
-        eprintln!("Error while responding: {}", err)
+        eprintln!("Error while responding: {}", err);
+        bail!(err);
     }
+    Ok(())
 }

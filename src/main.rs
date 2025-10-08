@@ -53,14 +53,20 @@ struct Handler {
 #[async_trait]
 impl EventHandler for Handler {
     async fn ready(&self, ctx: Context, _ready: Ready) {
-        events::on_ready(ctx).await
+        if let Err(err) = events::on_ready(ctx).await {
+            eprintln!("Error in on_ready: {err}");
+        }
     }
 
     async fn message(&self, ctx: Context, msg: Message) {
-        commands::execute_command(ctx, msg, &self.config).await;
+        if let Err(err) = commands::execute_command(ctx, msg, &self.config).await {
+            eprintln!("Error while executing command: {err}");
+        }
     }
 
     async fn voice_state_update(&self, ctx: Context, old: Option<VoiceState>, new: VoiceState) {
-        events::on_voice_state_update(ctx, old, new, &self.config).await
+        if let Err(err) = events::on_voice_state_update(ctx, old, new, &self.config).await {
+            eprintln!("Error in voice_state_update: {err}");
+        }
     }
 }

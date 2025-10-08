@@ -3,19 +3,24 @@ use crate::{
     audio::{choose_any_sound, choose_sound, list_categories, play_sound_in_response_to},
     commands,
 };
+use anyhow::{anyhow, bail};
 use serenity::all::{Context, Message, MessageBuilder};
 use std::collections::HashSet;
 
 mod help;
 mod stats;
 
-pub async fn execute_command(ctx: Context, msg: Message, config: &BotConfig) {
+pub async fn execute_command(
+    ctx: Context,
+    msg: Message,
+    config: &BotConfig,
+) -> Result<(), anyhow::Error> {
     // Ensure it LOOKS like a real command
-    let command = match parse_command(&msg.content) {
+    let command = match parse_command(&msg.content)? {
         Some(c) => c,
         None => {
             // explicitly do nothing and stop
-            return;
+            return Ok(());
         }
     };
 
@@ -25,12 +30,12 @@ pub async fn execute_command(ctx: Context, msg: Message, config: &BotConfig) {
         "" => play_any_sound(ctx, msg, config).await,
         category => {
             // Check if it is a valid category.
-            let categories: HashSet<String> = list_categories(&config.soundbank).collect();
+            let categories: HashSet<String> = list_categories(&config.soundbank)?.collect();
 
             // If it's a valid category, pick a sound and play it.
             if categories.contains(category) {
-                play_sound_from_category(ctx, msg, config, category.into()).await;
-                return;
+                play_sound_from_category(ctx, msg, config, category.into()).await?;
+                return Ok(());
             }
 
             // Otherwise, upload it as a response.
@@ -46,15 +51,17 @@ pub async fn execute_command(ctx: Context, msg: Message, config: &BotConfig) {
 
             if let Err(err) = result {
                 eprintln!("Unable to reply to an invalid command that was sent: {err}");
+                bail!(err);
             }
+            Ok(())
         }
     }
 }
 
-fn parse_command(content: &String) -> Option<String> {
+fn parse_command(content: &str) -> Result<Option<String>, anyhow::Error> {
     // IF there isn't a command prefix then there is no command
     if !content.contains(crate::COMMAND_PREFIX) {
-        return None;
+        return Ok(None);
     }
 
     // Find the LAST token that starts with the prefix.
@@ -62,22 +69,30 @@ fn parse_command(content: &String) -> Option<String> {
         .split(" ")
         .filter(|f| f.starts_with(crate::COMMAND_PREFIX))
         .last()
-        .expect("no command tokens somehow");
+        .ok_or(anyhow!("no command tokens somehow"))?;
 
     // Strip off the prefix and figure out what we're doing.
-
     match token.strip_prefix(crate::COMMAND_PREFIX) {
-        Some(cmd) => Some(cmd.to_string()),
+        Some(cmd) => Ok(Some(cmd.to_string())),
         None => {
-            eprintln!("Command could not be parsed: {content}");
-            None
+            // This should never happen since we filtered for tokens starting with the prefix,
+            // but if it does, it's a logic error rather than a user error
+            Err(anyhow!(
+                "Command token '{}' doesn't start with prefix '{}' - this is a bug",
+                token,
+                crate::COMMAND_PREFIX
+            ))
         }
     }
 }
 
-async fn play_any_sound(ctx: Context, msg: Message, config: &BotConfig) {
-    let sound = choose_any_sound(&config.soundbank);
-    play_sound_in_response_to(ctx, msg, sound, config).await;
+async fn play_any_sound(
+    ctx: Context,
+    msg: Message,
+    config: &BotConfig,
+) -> Result<(), anyhow::Error> {
+    let sound = choose_any_sound(&config.soundbank)?;
+    play_sound_in_response_to(ctx, msg, sound, config).await
 }
 
 async fn play_sound_from_category(
@@ -85,7 +100,7 @@ async fn play_sound_from_category(
     msg: Message,
     config: &BotConfig,
     category: String,
-) {
-    let sound = choose_sound(&config.soundbank, category);
-    play_sound_in_response_to(ctx, msg, sound, config).await;
+) -> Result<(), anyhow::Error> {
+    let sound = choose_sound(&config.soundbank, category)?;
+    play_sound_in_response_to(ctx, msg, sound, config).await
 }

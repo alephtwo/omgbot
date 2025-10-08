@@ -47,20 +47,23 @@ mod test {
     }
 
     #[test]
-    fn path_is_not_a_directory() {
+    fn path_is_not_a_directory() -> Result<(), anyhow::Error> {
         // Create a directory containing a temporary file
-        let tmp = TempDir::new("omgbot-test").expect("unable to create tempdir");
+        let tmp = TempDir::new("omgbot-test")?;
         let path = &tmp.path().join("test.txt");
-        File::create(path).expect("unable to create test file");
+        File::create(path)?;
 
         // Confirm that the file is - indeed - not a directory
-        let expected_path = path.to_str().expect("non-utf8 strings not allowed");
+        let expected_path = path
+            .to_str()
+            .ok_or(anyhow::anyhow!("non-utf8 strings not allowed"))?;
         assert_eq!(
             validate_dir_exists(expected_path),
             Err(format!("Not a directory: {}", expected_path))
         );
 
         // Close the temp directory
-        tmp.close().expect("unable to close temp dir");
+        tmp.close()?;
+        Ok(())
     }
 }

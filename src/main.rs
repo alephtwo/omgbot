@@ -1,7 +1,9 @@
 mod audio;
+mod cli;
 mod commands;
 mod events;
 
+use crate::cli::Cli;
 use clap::Parser;
 use serenity::{
     Client,
@@ -12,17 +14,6 @@ use songbird::SerenityInit;
 use std::path::PathBuf;
 
 pub const COMMAND_PREFIX: &str = "!";
-
-#[derive(Parser, Debug)]
-struct Cli {
-    #[arg(long, env = "DISCORD_TOKEN")]
-    discord_token: String,
-    #[arg(
-        value_hint = clap::ValueHint::DirPath,
-        value_parser = validate_dir_exists
-    )]
-    sounds_dir: PathBuf,
-}
 
 #[tokio::main]
 async fn main() {
@@ -64,15 +55,4 @@ impl EventHandler for Handler {
     async fn voice_state_update(&self, ctx: Context, old: Option<VoiceState>, new: VoiceState) {
         events::on_voice_state_update::handle(ctx, old, new, &self.sounds_dir).await
     }
-}
-
-fn validate_dir_exists(s: &str) -> Result<PathBuf, String> {
-    let path = PathBuf::from(s);
-    if !path.exists() {
-        return Err(format!("Directory doesn't exist: {s}"));
-    }
-    if !path.is_dir() {
-        return Err(format!("Not a directory: {s}"));
-    }
-    Ok(path)
 }

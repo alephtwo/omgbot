@@ -57,7 +57,7 @@ pub async fn play_sound_in_response_to(
         Some(channel_id) => {
             println!("{} requested {:?}", msg.author.name, file);
             // They are in a voice channel, so play the sound there.
-            play_sound(ctx, guild_id, channel_id, file, &config).await
+            play_sound(ctx, guild_id, channel_id, file, config).await
         }
         None => {
             // Try to open the file for reading
@@ -134,13 +134,13 @@ pub async fn play_sound(
     );
 }
 
-pub fn choose_sound(soundbank: &PathBuf, category: String) -> PathBuf {
+pub fn choose_sound(soundbank: &Path, category: String) -> PathBuf {
     let source_dir = soundbank.join(category);
     let children = list_children(source_dir.as_path()).filter(|f| f.is_file());
     children.choose(&mut rng()).expect("no children")
 }
 
-pub fn choose_any_sound(soundbank: &PathBuf) -> PathBuf {
+pub fn choose_any_sound(soundbank: &Path) -> PathBuf {
     let pattern = soundbank.join("**/*");
     let pattern_str = pattern.to_str().expect("Non-UTF8 path not supported");
 

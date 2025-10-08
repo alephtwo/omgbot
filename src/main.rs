@@ -5,6 +5,7 @@ mod config;
 mod events;
 
 use crate::cli::Cli;
+use anyhow::bail;
 use clap::Parser;
 use config::BotConfig;
 use serenity::{
@@ -17,7 +18,7 @@ use songbird::SerenityInit;
 pub const COMMAND_PREFIX: &str = "!";
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), anyhow::Error> {
     // Initialize logging
     tracing_subscriber::fmt::init();
 
@@ -37,12 +38,13 @@ async fn main() {
             },
         })
         .register_songbird()
-        .await
-        .expect("Error creating client");
+        .await?;
 
     if let Err(why) = client.start().await {
         tracing::error!("Client error: {why:?}");
+        bail!(why)
     }
+    Ok(())
 }
 
 struct Handler {

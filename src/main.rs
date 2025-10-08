@@ -27,7 +27,10 @@ async fn main() {
 
     let mut client = Client::builder(&args.discord_token, intents)
         .event_handler(Handler {
-            sounds_dir: args.sounds_dir,
+            config: BotConfig {
+                soundbank: args.sounds_dir,
+                volume: f32::from(args.volume) / 100.0,
+            },
         })
         .register_songbird()
         .await
@@ -38,21 +41,26 @@ async fn main() {
     }
 }
 
+struct BotConfig {
+    soundbank: PathBuf,
+    volume: f32,
+}
+
 struct Handler {
-    sounds_dir: PathBuf,
+    config: BotConfig,
 }
 
 #[async_trait]
 impl EventHandler for Handler {
     async fn ready(&self, ctx: Context, _ready: Ready) {
-        events::on_ready::handle(ctx).await
+        events::on_ready(ctx).await
     }
 
     async fn message(&self, ctx: Context, msg: Message) {
-        commands::execute_command(ctx, msg, &self.sounds_dir).await;
+        commands::execute_command(ctx, msg, &self.config).await;
     }
 
     async fn voice_state_update(&self, ctx: Context, old: Option<VoiceState>, new: VoiceState) {
-        events::on_voice_state_update::handle(ctx, old, new, &self.sounds_dir).await
+        events::on_voice_state_update(ctx, old, new, &self.config).await
     }
 }

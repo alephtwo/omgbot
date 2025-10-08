@@ -1,3 +1,4 @@
+use crate::BotConfig;
 use glob::glob;
 use rand::{rng, seq::IteratorRandom};
 use serenity::{
@@ -24,7 +25,12 @@ impl EventHandler for LeaveAfterPlaying {
     }
 }
 
-pub async fn play_sound_in_response_to(ctx: Context, msg: Message, file: PathBuf) {
+pub async fn play_sound_in_response_to(
+    ctx: Context,
+    msg: Message,
+    file: PathBuf,
+    config: &BotConfig,
+) {
     // Make sure this command came from a guild
     let guild_id = match msg.guild_id {
         Some(id) => id,
@@ -51,7 +57,7 @@ pub async fn play_sound_in_response_to(ctx: Context, msg: Message, file: PathBuf
         Some(channel_id) => {
             println!("{} requested {:?}", msg.author.name, file);
             // They are in a voice channel, so play the sound there.
-            play_sound(ctx, guild_id, channel_id, file).await
+            play_sound(ctx, guild_id, channel_id, file, &config).await
         }
         None => {
             // Try to open the file for reading
@@ -90,7 +96,13 @@ pub async fn play_sound_in_response_to(ctx: Context, msg: Message, file: PathBuf
     }
 }
 
-pub async fn play_sound(ctx: Context, guild_id: GuildId, channel_id: ChannelId, file: PathBuf) {
+pub async fn play_sound(
+    ctx: Context,
+    guild_id: GuildId,
+    channel_id: ChannelId,
+    file: PathBuf,
+    config: &BotConfig,
+) {
     // Join that channel.
     let manager = songbird::get(&ctx)
         .await
@@ -110,7 +122,7 @@ pub async fn play_sound(ctx: Context, guild_id: GuildId, channel_id: ChannelId, 
 
     // please don't break everyone's eardrums
     track_handle
-        .set_volume(0.25)
+        .set_volume(config.volume)
         .expect("I am so sorry. I destroyed everyone's ears.");
 
     let _ = track_handle.add_event(
@@ -122,14 +134,14 @@ pub async fn play_sound(ctx: Context, guild_id: GuildId, channel_id: ChannelId, 
     );
 }
 
-pub fn choose_sound(sounds_dir: &Path, category: String) -> PathBuf {
-    let source_dir = sounds_dir.join(category);
+pub fn choose_sound(soundbank: &PathBuf, category: String) -> PathBuf {
+    let source_dir = soundbank.join(category);
     let children = list_children(source_dir.as_path()).filter(|f| f.is_file());
     children.choose(&mut rng()).expect("no children")
 }
 
-pub fn choose_any_sound(sounds_dir: &Path) -> PathBuf {
-    let pattern = sounds_dir.join("**/*");
+pub fn choose_any_sound(soundbank: &PathBuf) -> PathBuf {
+    let pattern = soundbank.join("**/*");
     let pattern_str = pattern.to_str().expect("Non-UTF8 path not supported");
 
     let sounds = glob(pattern_str)
@@ -140,12 +152,12 @@ pub fn choose_any_sound(sounds_dir: &Path) -> PathBuf {
     sounds.choose(&mut rng()).expect("no children")
 }
 
-pub fn list_categories(sounds_dir: &Path) -> impl Iterator<Item = String> {
-    list_category_directories(sounds_dir).filter_map(|f| get_category_name(&f))
+pub fn list_categories(soundbank: &Path) -> impl Iterator<Item = String> {
+    list_category_directories(soundbank).filter_map(|f| get_category_name(&f))
 }
 
-pub fn list_category_directories(sounds_dir: &Path) -> impl Iterator<Item = PathBuf> {
-    list_children(sounds_dir).filter(|path| path.is_dir()) // only directories
+pub fn list_category_directories(soundbank: &Path) -> impl Iterator<Item = PathBuf> {
+    list_children(soundbank).filter(|path| path.is_dir()) // only directories
 }
 
 pub fn list_children(path: &Path) -> impl Iterator<Item = PathBuf> {

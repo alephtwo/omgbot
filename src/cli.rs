@@ -6,6 +6,7 @@ pub struct Cli {
     #[arg(long, env = "DISCORD_TOKEN")]
     pub discord_token: String,
     #[arg(
+        name = "sounds",
         value_hint = clap::ValueHint::DirPath,
         value_parser = validate_dir_exists
     )]

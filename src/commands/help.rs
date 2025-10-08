@@ -2,8 +2,8 @@ use crate::audio::list_categories;
 use serenity::all::{Context, CreateMessage, MessageBuilder, User};
 use std::path::Path;
 
-pub async fn run(ctx: Context, user: User, sounds_dir: &Path) {
-    let mut categories: Vec<String> = list_categories(sounds_dir).collect();
+pub async fn run(ctx: Context, user: User, soundbank: &Path) {
+    let mut categories: Vec<String> = list_categories(soundbank).collect();
     categories.sort();
 
     let mut content = MessageBuilder::new();

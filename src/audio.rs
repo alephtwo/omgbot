@@ -46,7 +46,7 @@ pub async fn play_sound_in_response_to(
 
     match voice_channel {
         Some(channel_id) => {
-            println!("{} requested {:?}", msg.author.name, file);
+            tracing::info!("{} requested {:?}", msg.author.name, file);
             // They are in a voice channel, so play the sound there.
             play_sound(ctx, guild_id, channel_id, file, config).await
         }
@@ -73,7 +73,7 @@ pub async fn play_sound_in_response_to(
             // Send message + file
             let result = msg.channel_id.send_message(&ctx.http, message).await;
             if let Err(err) = result {
-                eprintln!("Error responding to command: {err}");
+                tracing::error!("Error responding to command: {err}");
                 bail!(err);
             }
             Ok(())

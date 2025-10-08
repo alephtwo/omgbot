@@ -13,7 +13,7 @@ pub async fn on_ready(ctx: Context) -> Result<(), anyhow::Error> {
         .await?;
 
     ctx.set_activity(Some(ActivityData::custom("!help for commands")));
-    println!("Invite Link: {}", builder.build());
+    tracing::info!("Invite Link: {}", builder.build());
     Ok(())
 }
 
@@ -49,9 +49,11 @@ pub async fn on_voice_state_update(
         }
     };
 
-    println!(
+    tracing::info!(
         "{} joined channel {} on guild {}",
-        new.user_id, current_channel, guild_id
+        new.user_id,
+        current_channel,
+        guild_id
     );
 
     let sound = choose_sound(&config.soundbank, "greeting".to_string())?;

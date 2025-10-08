@@ -50,7 +50,7 @@ pub async fn execute_command(
                 .await;
 
             if let Err(err) = result {
-                eprintln!("Unable to reply to an invalid command that was sent: {err}");
+                tracing::error!("Unable to reply to an invalid command that was sent: {err}");
                 bail!(err);
             }
             Ok(())

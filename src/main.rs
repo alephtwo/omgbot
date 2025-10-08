@@ -17,6 +17,9 @@ pub const COMMAND_PREFIX: &str = "!";
 
 #[tokio::main]
 async fn main() {
+    // Initialize logging
+    tracing_subscriber::fmt::init();
+
     let args = Cli::parse();
 
     let intents = GatewayIntents::GUILDS
@@ -37,7 +40,7 @@ async fn main() {
         .expect("Error creating client");
 
     if let Err(why) = client.start().await {
-        println!("Client error: {why:?}");
+        tracing::error!("Client error: {why:?}");
     }
 }
 
@@ -54,19 +57,19 @@ struct Handler {
 impl EventHandler for Handler {
     async fn ready(&self, ctx: Context, _ready: Ready) {
         if let Err(err) = events::on_ready(ctx).await {
-            eprintln!("Error in on_ready: {err}");
+            tracing::error!("Error in on_ready: {err}");
         }
     }
 
     async fn message(&self, ctx: Context, msg: Message) {
         if let Err(err) = commands::execute_command(ctx, msg, &self.config).await {
-            eprintln!("Error while executing command: {err}");
+            tracing::error!("Error while executing command: {err}");
         }
     }
 
     async fn voice_state_update(&self, ctx: Context, old: Option<VoiceState>, new: VoiceState) {
         if let Err(err) = events::on_voice_state_update(ctx, old, new, &self.config).await {
-            eprintln!("Error in voice_state_update: {err}");
+            tracing::error!("Error in voice_state_update: {err}");
         }
     }
 }

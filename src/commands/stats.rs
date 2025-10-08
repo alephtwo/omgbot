@@ -27,7 +27,7 @@ pub async fn report(ctx: Context, msg: Message, sounds_dir: &Path) -> Result<(),
 
     let result = msg.reply(ctx.http, content).await;
     if let Err(err) = result {
-        eprintln!("Error while responding: {}", err);
+        tracing::error!("Error while responding: {}", err);
         bail!(err);
     }
     Ok(())

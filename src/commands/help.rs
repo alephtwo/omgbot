@@ -17,7 +17,7 @@ pub async fn run(ctx: Context, user: User, soundbank: &Path) -> Result<(), anyho
         .await;
 
     if let Err(err) = result {
-        eprintln!("Error while responding: {}", err);
+        tracing::error!("Error while responding: {}", err);
         bail!(err);
     }
     Ok(())

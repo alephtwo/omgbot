@@ -1637,6 +1637,8 @@ dependencies = [
  "symphonia",
  "tempdir",
  "tokio",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]

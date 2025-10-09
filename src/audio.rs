@@ -1,16 +1,11 @@
 use crate::BotConfig;
 use anyhow::{anyhow, bail};
-use glob::glob;
-use rand::{rng, seq::IteratorRandom};
 use serenity::{
     all::{ChannelId, Context, CreateAttachment, CreateMessage, GuildId, Message, MessageBuilder},
     async_trait,
 };
 use songbird::{Event, EventHandler, TrackEvent, input::File};
-use std::{
-    path::{Path, PathBuf},
-    sync::Arc,
-};
+use std::{path::Path, sync::Arc};
 
 #[derive(Clone)]
 pub struct LeaveAfterPlaying {
@@ -109,53 +104,4 @@ pub async fn play_sound(
         },
     );
     Ok(())
-}
-
-pub fn choose_sound(soundbank: &Path, category: &str) -> Result<PathBuf, anyhow::Error> {
-    let source_dir = soundbank.join(category);
-    let children = list_children(source_dir.as_path())?.filter(|f| f.is_file());
-    children.choose(&mut rng()).ok_or(anyhow!("no children"))
-}
-
-pub fn choose_any_sound(soundbank: &Path) -> Result<PathBuf, anyhow::Error> {
-    let pattern = soundbank.join("**/*");
-    let pattern_str = pattern
-        .to_str()
-        .ok_or(anyhow!("Non-UTF8 path not supported"))?;
-
-    let sounds = glob(pattern_str)?
-        .filter_map(Result::ok)
-        .filter(|f| f.is_file());
-
-    sounds.choose(&mut rng()).ok_or(anyhow!("no children"))
-}
-
-pub fn list_categories(soundbank: &Path) -> Result<impl Iterator<Item = String>, anyhow::Error> {
-    let results = list_category_directories(soundbank)?.filter_map(|f| get_category_name(&f));
-    Ok(results)
-}
-
-pub fn list_category_directories(
-    soundbank: &Path,
-) -> Result<impl Iterator<Item = PathBuf>, anyhow::Error> {
-    let results = list_children(soundbank)?
-        // only directories
-        .filter(|path| path.is_dir());
-    Ok(results)
-}
-
-pub fn list_children(path: &Path) -> Result<impl Iterator<Item = PathBuf>, anyhow::Error> {
-    let pattern = path.join("*");
-    let pattern_str = pattern
-        .to_str()
-        .ok_or(anyhow!("Non-UTF8 path not supported"))?;
-    // skip invalid entries
-    let results = glob(pattern_str)?.filter_map(Result::ok);
-    Ok(results)
-}
-
-pub fn get_category_name(path: &Path) -> Option<String> {
-    path.file_name()
-        .and_then(|name| name.to_str())
-        .map(|s| s.to_string())
 }

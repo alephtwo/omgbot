@@ -1,5 +1,5 @@
 use crate::BotConfig;
-use crate::audio::{choose_sound, play_sound};
+use crate::audio::play_sound;
 use anyhow::anyhow;
 use serenity::all::VoiceState;
 use serenity::all::{ActivityData, Context, CreateBotAuthParameters, Permissions, Scope};
@@ -49,6 +49,6 @@ pub async fn on_voice_state_update(
         }
     };
 
-    let sound = choose_sound(&config.soundbank, "greeting")?;
+    let sound = config.soundbank.choose_sound("greeting")?;
     play_sound(ctx, guild_id, current_channel, &sound, config).await
 }

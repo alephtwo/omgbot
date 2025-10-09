@@ -1,10 +1,9 @@
-use crate::audio::list_categories;
+use crate::config::BotConfig;
 use anyhow::bail;
 use serenity::all::{Context, CreateMessage, MessageBuilder, User};
-use std::path::Path;
 
-pub async fn run(ctx: Context, user: User, soundbank: &Path) -> Result<(), anyhow::Error> {
-    let mut categories: Vec<String> = list_categories(soundbank)?.collect();
+pub async fn run(ctx: Context, user: User, config: &BotConfig) -> Result<(), anyhow::Error> {
+    let mut categories: Vec<String> = config.soundbank.categories().collect();
     categories.sort();
 
     let mut content = MessageBuilder::new();

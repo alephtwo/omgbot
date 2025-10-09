@@ -1,8 +1,4 @@
-use crate::{
-    BotConfig,
-    audio::{choose_any_sound, choose_sound, list_categories, play_sound_in_response_to},
-    commands,
-};
+use crate::{BotConfig, audio::play_sound_in_response_to, commands};
 use anyhow::{anyhow, bail};
 use serenity::all::{Context, Message, MessageBuilder};
 use std::collections::HashSet;
@@ -25,12 +21,12 @@ pub async fn execute_command(
     };
 
     match command.as_str() {
-        "help" => commands::help::run(ctx, msg.author, &config.soundbank).await,
-        "stats" => commands::stats::report(ctx, msg, &config.soundbank).await,
+        "help" => commands::help::run(ctx, msg.author, config).await,
+        "stats" => commands::stats::report(ctx, msg, config).await,
         "" => play_any_sound(ctx, msg, config).await,
         category => {
             // Check if it is a valid category.
-            let categories: HashSet<String> = list_categories(&config.soundbank)?.collect();
+            let categories: HashSet<String> = config.soundbank.categories().collect();
 
             // If it's a valid category, pick a sound and play it.
             if categories.contains(category) {
@@ -91,7 +87,7 @@ async fn play_any_sound(
     msg: Message,
     config: &BotConfig,
 ) -> Result<(), anyhow::Error> {
-    let sound = choose_any_sound(&config.soundbank)?;
+    let sound = config.soundbank.choose_any_sound()?;
     play_sound_in_response_to(ctx, msg, &sound, config).await
 }
 
@@ -101,6 +97,6 @@ async fn play_sound_from_category(
     config: &BotConfig,
     category: &str,
 ) -> Result<(), anyhow::Error> {
-    let sound = choose_sound(&config.soundbank, category)?;
+    let sound = config.soundbank.choose_sound(category)?;
     play_sound_in_response_to(ctx, msg, &sound, config).await
 }

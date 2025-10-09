@@ -3,6 +3,7 @@ mod cli;
 mod commands;
 mod config;
 mod events;
+mod soundbank;
 
 use crate::cli::Cli;
 use anyhow::bail;
@@ -37,10 +38,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let mut client = Client::builder(&args.discord_token, intents)
         .event_handler(Handler {
-            config: BotConfig {
-                soundbank: args.sounds_dir,
-                volume: f32::from(args.volume) / 100.0,
-            },
+            config: BotConfig::from_cli(args)?,
         })
         .register_songbird()
         .await?;

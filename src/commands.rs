@@ -17,7 +17,7 @@ pub async fn execute_command(
 ) -> Result<(), anyhow::Error> {
     // Ensure it LOOKS like a real command
     let command = match parse_command(&msg.content)? {
-        Some(c) => c,
+        Some(c) => c.to_owned(), // Convert to owned string to avoid borrow issues
         None => {
             // explicitly do nothing and stop
             return Ok(());
@@ -58,7 +58,7 @@ pub async fn execute_command(
     }
 }
 
-fn parse_command(content: &str) -> Result<Option<String>, anyhow::Error> {
+fn parse_command(content: &str) -> Result<Option<&str>, anyhow::Error> {
     // IF there isn't a command prefix then there is no command
     if !content.contains(crate::COMMAND_PREFIX) {
         return Ok(None);
@@ -73,7 +73,7 @@ fn parse_command(content: &str) -> Result<Option<String>, anyhow::Error> {
 
     // Strip off the prefix and figure out what we're doing.
     match token.strip_prefix(crate::COMMAND_PREFIX) {
-        Some(cmd) => Ok(Some(cmd.to_string())),
+        Some(cmd) => Ok(Some(cmd)),
         None => {
             // This should never happen since we filtered for tokens starting with the prefix,
             // but if it does, it's a logic error rather than a user error
@@ -92,7 +92,7 @@ async fn play_any_sound(
     config: &BotConfig,
 ) -> Result<(), anyhow::Error> {
     let sound = choose_any_sound(&config.soundbank)?;
-    play_sound_in_response_to(ctx, msg, sound, config).await
+    play_sound_in_response_to(ctx, msg, &sound, config).await
 }
 
 async fn play_sound_from_category(
@@ -102,5 +102,5 @@ async fn play_sound_from_category(
     category: &str,
 ) -> Result<(), anyhow::Error> {
     let sound = choose_sound(&config.soundbank, category)?;
-    play_sound_in_response_to(ctx, msg, sound, config).await
+    play_sound_in_response_to(ctx, msg, &sound, config).await
 }

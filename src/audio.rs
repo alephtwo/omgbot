@@ -29,17 +29,16 @@ impl EventHandler for LeaveAfterPlaying {
 pub async fn play_sound_in_response_to(
     ctx: Context,
     msg: Message,
-    file: PathBuf,
+    file: &Path,
     config: &BotConfig,
 ) -> Result<(), anyhow::Error> {
     // Make sure this command came from a guild
     let guild_id = msg.guild_id.ok_or(anyhow!("Not in a guild"))?;
-    let guild = msg
+
+    // Check if user is in a voice channel without cloning the guild
+    let voice_channel = msg
         .guild(&ctx.cache)
         .ok_or(anyhow!("Guild not in cache"))?
-        .clone();
-
-    let voice_channel = guild
         .voice_states
         .get(&msg.author.id)
         .and_then(|vs| vs.channel_id);
@@ -85,7 +84,7 @@ pub async fn play_sound(
     ctx: Context,
     guild_id: GuildId,
     channel_id: ChannelId,
-    file: PathBuf,
+    file: &Path,
     config: &BotConfig,
 ) -> Result<(), anyhow::Error> {
     // Join that channel.
@@ -96,7 +95,8 @@ pub async fn play_sound(
 
     let handler_lock = manager.join(guild_id, channel_id).await?;
     let mut handler = handler_lock.lock().await;
-    let track_handle = handler.play_only(File::new(file).into());
+    let sound = file.to_path_buf();
+    let track_handle = handler.play_only(File::new(sound).into());
 
     // please don't break everyone's eardrums
     track_handle.set_volume(config.volume)?;

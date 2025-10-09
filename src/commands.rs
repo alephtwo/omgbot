@@ -68,7 +68,7 @@ fn parse_command(content: &str) -> Result<Option<String>, anyhow::Error> {
     let token = content
         .split_whitespace()
         .filter(|f| f.starts_with(crate::COMMAND_PREFIX))
-        .last()
+        .next_back()
         .ok_or(anyhow!("no command tokens somehow"))?;
 
     // Strip off the prefix and figure out what we're doing.

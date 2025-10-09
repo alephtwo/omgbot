@@ -49,13 +49,6 @@ pub async fn on_voice_state_update(
         }
     };
 
-    tracing::info!(
-        "{} joined channel {} on guild {}",
-        new.user_id,
-        current_channel,
-        guild_id
-    );
-
     let sound = choose_sound(&config.soundbank, "greeting")?;
     play_sound(ctx, guild_id, current_channel, sound, config).await
 }

@@ -13,7 +13,7 @@ pub struct Cli {
     pub sounds_dir: PathBuf,
     #[arg(
         long,
-        value_parser = clap::value_parser!(u16).range(0..100),
+        value_parser = clap::value_parser!(u16).range(0..=100),
         default_value_t = 25
     )]
     pub volume: u16,
@@ -32,11 +32,9 @@ fn validate_dir_exists(s: &str) -> Result<PathBuf, String> {
 
 #[cfg(test)]
 mod test {
-    use std::fs::File;
-
-    use tempdir::TempDir;
-
     use super::*;
+    use std::fs::File;
+    use tempdir::TempDir;
 
     #[test]
     fn dir_does_not_exist() {

@@ -14,14 +14,19 @@ use serenity::{
     async_trait,
 };
 use songbird::SerenityInit;
+use tracing::Level;
+use tracing_subscriber::{filter, layer::SubscriberExt, util::SubscriberInitExt};
 
 pub const COMMAND_PREFIX: &str = "!";
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
     // Initialize logging
-    tracing_subscriber::fmt::init();
-
+    let filter = filter::Targets::new().with_target("omgbot", Level::INFO);
+    tracing_subscriber::registry()
+        .with(tracing_subscriber::fmt::layer())
+        .with(filter)
+        .init();
     let args = Cli::parse();
 
     let intents = GatewayIntents::GUILDS

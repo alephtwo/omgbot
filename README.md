@@ -15,17 +15,26 @@ When a command is issued, the following occurs:
 
 ## Usage
 
-Set your API token as the expected environment variable:
-
-```bash
-DISCORD_TOKEN=your-api-key
+```shell
+omgbot --discord-token "${your_token}" "${your_sound_dir}"
+# or
+DISCORD_TOKEN="${your_token}" omgbot "${your_sound_dir}"
 ```
 
-Then run `npm start`.
+### Configuration
 
-`start.sh` accomplishes the same task but endeavors to make doing so easier on
-a production box.
+Configuration is provided via command line arguments.
 
-## Development Notes
+| Flag              | Description                                       |
+| ----------------- | ------------------------------------------------- |
+| `--discord-token` | The Discord token to authenticate with            |
+| `--volume`        | The volume to play sounds at. (0-100, Default 25) |
 
-1. Ensure that `npm run lint` doesn't report any issues.
+## Development
+
+1. Install [nextest](https://nexte.st/) and [cargo-mutants](https://mutants.rs/).
+1. Run tests with `cargo nextest run`.
+   1. Try to address any mutants by iterating with `cargo mutants`.
+1. Ensure linting and formatting passes:
+   1. `cargo clippy`
+   1. `cargo fmt`

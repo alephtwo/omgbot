@@ -34,7 +34,7 @@ fn validate_dir_exists(s: &str) -> Result<PathBuf, String> {
 mod test {
     use super::*;
     use std::fs::File;
-    use tempdir::TempDir;
+    use tempfile::TempDir;
 
     #[test]
     fn dir_does_not_exist() {
@@ -47,7 +47,7 @@ mod test {
     #[test]
     fn path_is_not_a_directory() -> Result<(), anyhow::Error> {
         // Create a directory containing a temporary file
-        let tmp = TempDir::new("omgbot-test-cli")?;
+        let tmp = TempDir::with_suffix("omgbot-test-cli")?;
         let path = &tmp.path().join("test.txt");
         File::create(path)?;
 

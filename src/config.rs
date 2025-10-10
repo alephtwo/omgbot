@@ -27,13 +27,13 @@ mod tests {
     use super::*;
     use crate::cli::Cli;
     use std::fs::File;
-    use tempdir::TempDir;
+    use tempfile::TempDir;
 
     #[test]
     fn test_load_config() -> Result<(), anyhow::Error> {
         // Make some sounds
         // Create a directory containing a temporary file
-        let tmp = TempDir::new("omgbot-test-config")?;
+        let tmp = TempDir::with_suffix("omgbot-test-config")?;
         // one category
         let cat1 = &tmp.path().join("cat1");
         std::fs::create_dir(cat1)?;

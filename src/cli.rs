@@ -47,7 +47,7 @@ mod test {
     #[test]
     fn path_is_not_a_directory() -> Result<(), anyhow::Error> {
         // Create a directory containing a temporary file
-        let tmp = TempDir::new("omgbot-test")?;
+        let tmp = TempDir::new("omgbot-test-cli")?;
         let path = &tmp.path().join("test.txt");
         File::create(path)?;
 

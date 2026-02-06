@@ -63,8 +63,7 @@ fn parse_command(content: &str) -> Result<Option<&str>, anyhow::Error> {
     // Find the LAST token that starts with the prefix.
     let token = content
         .split_whitespace()
-        .filter(|f| f.starts_with(crate::COMMAND_PREFIX))
-        .next_back()
+        .rfind(|f| f.starts_with(crate::COMMAND_PREFIX))
         .ok_or(anyhow!("no command tokens somehow"))?;
 
     // Strip off the prefix and figure out what we're doing.

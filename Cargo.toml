@@ -8,7 +8,8 @@ anyhow = "1.0.101"
 clap = { version = "4.5.57", features = ["cargo", "derive", "env"] }
 rand = "0.10.0"
 serenity = { version = "0.12.5", features = ["voice"] }
-songbird = "0.5.0"
+# temporary fix until dave is fully supported by serenity/songbird
+songbird = { git = "https://github.com/beerpsi-forks/songbird.git", branch = "davey" }
 symphonia = { version = "0.5.5", features = ["mp3"] }
 tempfile = "3.24.0"
 tokio = { version = "1.49.0", features = ["rt-multi-thread"] }

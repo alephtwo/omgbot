@@ -58,19 +58,19 @@ struct Handler {
 impl EventHandler for Handler {
     async fn ready(&self, ctx: Context, _ready: Ready) {
         if let Err(err) = events::on_ready(ctx).await {
-            tracing::error!("Error in on_ready: {err}");
+            tracing::error!("Error in on_ready: {err:?}");
         }
     }
 
     async fn message(&self, ctx: Context, msg: Message) {
         if let Err(err) = commands::execute_command(ctx, msg, &self.config).await {
-            tracing::error!("Error while executing command: {err}");
+            tracing::error!("Error while executing command: {err:?}");
         }
     }
 
     async fn voice_state_update(&self, ctx: Context, old: Option<VoiceState>, new: VoiceState) {
         if let Err(err) = events::on_voice_state_update(ctx, old, new, &self.config).await {
-            tracing::error!("Error in voice_state_update: {err}");
+            tracing::error!("Error in voice_state_update: {err:?}");
         }
     }
 }

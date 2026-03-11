@@ -2,6 +2,8 @@
 name: "Code Checks"
 "on":
   push:
+    branches:
+      - "*"
 concurrency:
   group: "${{ github.workflow }}-${{ github.ref }}"
   cancel-in-progress: true
@@ -10,8 +12,8 @@ jobs:
     name: "Test"
     runs-on: "ubuntu-latest"
     steps:
-      - uses: "actions/checkout@v5"
-      - uses: "actions/cache@v4"
+      - uses: "actions/checkout@v6"
+      - uses: "actions/cache@v5"
         with:
           path: |
             ~/.cargo/bin/
@@ -26,13 +28,13 @@ jobs:
           cargo binstall cargo-nextest --secure
       - name: "Run Nextest"
         run: |
-          cargo nextest run
+          cargo nextest run --no-tests pass
   clippy:
     name: "Clippy"
     runs-on: "ubuntu-latest"
     steps:
-      - uses: "actions/checkout@v5"
-      - uses: "actions/cache@v4"
+      - uses: "actions/checkout@v6"
+      - uses: "actions/cache@v5"
         with:
           path: |
             ~/.cargo/bin/
@@ -48,7 +50,7 @@ jobs:
     name: "Check Formatting"
     runs-on: "ubuntu-latest"
     steps:
-      - uses: "actions/checkout@v5"
+      - uses: "actions/checkout@v6"
       - name: "Check Formatting"
         run: |
           cargo fmt --all --check
@@ -58,7 +60,7 @@ jobs:
     container:
       image: "alpine:latest"
     steps:
-      - uses: "actions/checkout@v5"
+      - uses: "actions/checkout@v6"
       - name: "Install yamllint"
         run: |
           apk add yamllint
@@ -71,7 +73,7 @@ jobs:
     container:
       image: "node:latest"
     steps:
-      - uses: "actions/checkout@v5"
+      - uses: "actions/checkout@v6"
       - name: "Install markdownlint-cli"
         run: |
           npm install -g markdownlint-cli

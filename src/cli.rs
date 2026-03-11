@@ -2,6 +2,7 @@ use clap::Parser;
 use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
+#[clap(version, about, author)]
 pub struct Cli {
     #[arg(long, env = "DISCORD_TOKEN")]
     pub discord_token: String,

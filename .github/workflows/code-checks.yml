@@ -25,7 +25,7 @@ jobs:
       - uses: "cargo-bins/cargo-binstall@main"
       - name: "Install Nextest"
         run: |
-          cargo binstall cargo-nextest --secure
+          cargo binstall --locked --secure cargo-nextest
       - name: "Run Nextest"
         run: |
           cargo nextest run --no-tests pass

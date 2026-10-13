@@ -1,7 +1,8 @@
 # omgbot
 
 omgbot is a [Discord](https://discord.com) bot inspired by the Discord team's
-original example bot, [airhorn.solutions](https://blog.discord.com/airhorn-solutions-the-only-discord-bot-youll-ever-need-c2d0ba7b92e8).
+original example bot,
+[airhorn.solutions](https://blog.discord.com/airhorn-solutions-the-only-discord-bot-youll-ever-need-c2d0ba7b92e8).
 
 It provides a set of commands, each mapped to "short" sound clips.
 When a command is issued, the following occurs:
@@ -32,7 +33,8 @@ Configuration is provided via command line arguments.
 
 ## Development
 
-1. Install [nextest](https://nexte.st/) and [cargo-mutants](https://mutants.rs/).
+1. Install [nextest](https://nexte.st/) and
+   [cargo-mutants](https://mutants.rs/).
 1. Run tests with `cargo nextest run`.
    1. Try to address any mutants by iterating with `cargo mutants`.
 1. Ensure linting and formatting passes:
